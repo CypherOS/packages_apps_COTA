@@ -1,0 +1,49 @@
+<resources>
+    <!-- GENERAL -->
+    <string name="app_name">System update</string>
+	<string name="update_label">CypherOS</string>
+
+    <!-- Up To Date -->
+    <string name="no_updates_title">System update</string>
+    <string name="no_updates_text">Your device is currently up to date!</string>
+
+    <!-- Update available -->
+    <string name="update_found_title">Update available</string>
+    <string name="update_found_text">CypherOS %1$s is available.\n\nTap on the button below to begin downloading. To get the latest information on what is new in this update take a look at our news post.\n\nThe update requires a restart.\nUpdate size: %2$s</string>
+
+	<!-- Update checking message -->
+	<string name="update_checking">Checking for updates....</string>
+	
+    <!-- Downloading update -->
+    <string name="downloading_title">Downloading update…</string>
+    <string name="downloading_text">Downloading… %1$s\nTap on the button below to cancel downloading</string>
+
+    <!-- Download failed -->
+    <string name="download_failed_title">Download failed</string>
+    <string name="download_failed_text">Update failed.\nTap on the button below to check for updates again.</string>
+
+    <!-- Install -->
+    <string name="install_title">Install update</string>
+    <string name="install_text">Update successfully downloaded.\n Tap on the button below to install.</string>
+
+    <!-- MD5 -->
+    <string name="calculating_md5">Calculating MD5 sum…</string>
+    <string name="md5_mismatch">MD5 mismatch</string>
+    <string name="md5_install_anyway">Continue</string>
+
+    <!-- Reboot -->
+    <string name="alert_reboot_install_title">Install update</string>
+    <string name="alert_reboot_one_message">Your device will reboot and install the update.</string>
+    <string name="alert_reboot_now">Install now</string>
+
+    <!-- Errors -->
+    <string name="error_cannot_resume">Error: The download couldn\'t be resumed</string>
+    <string name="error_device_not_found">Error: Sdcard not mounted</string>
+    <string name="error_file_already_exists">Error: File already exists</string>
+    <string name="error_file_error">Error: Storage error</string>
+    <string name="error_http_data_error">Error: Http error</string>
+    <string name="error_insufficient_space">Error: No space left</string>
+    <string name="error_too_many_redirects">Error: Too many redirects</string>
+    <string name="error_unhandled_http_code">Error: Unhandled http code</string>
+    <string name="error_unknown">Error: Unknown</string>
+</resources>
