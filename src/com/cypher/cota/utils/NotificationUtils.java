@@ -38,8 +38,7 @@ public class NotificationUtils {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                 .setContentTitle(resources.getString(R.string.update_found_title))
-                .setSmallIcon(R.drawable.ic_launcher_mono)
-                .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher))
+                .setSmallIcon(R.drawable.ic_update_notification)
                 .setContentIntent(pIntent)
                 .setOngoing(true);
 
