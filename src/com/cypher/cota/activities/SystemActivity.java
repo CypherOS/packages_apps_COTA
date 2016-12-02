@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.Formatter;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.util.Log;
 
@@ -61,6 +62,7 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
     private TextView mMessage;
     private FloatingActionButton mButton;
     private TextView mToolbar;
+	private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +70,7 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
         setContentView(R.layout.activity_system);
 
         mToolbar = (TextView) findViewById(R.id.toolbar);
+		mProgressBar = (ProgressBar)view.findViewById(R.id.progress_bar);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         mMessage = (TextView) findViewById(R.id.message);
         mButton = (FloatingActionButton) findViewById(R.id.fab);
@@ -151,6 +154,18 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
             updateMessages(info.length > 0 ? info[0] : null);
         }
     }
+	
+	public void setProgress(int max, int progress) {
+        if (mState != STATE_DOWNLOADING) {
+            return;
+        }
+        mProgressBar.setMax(max);
+        mProgressBar.setProgress(progress);
+    }
+	
+	public ProgressBar getProgressBar() {
+        return mProgressBar;
+    }
 
     private void updateMessages(PackageInfo info) {
         mUpdatePackage = info;
@@ -161,6 +176,7 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
                     mToolbar.setText(R.string.no_updates_title);
                     mMessage.setText(R.string.no_updates_text);
                     mButton.setImageResource(R.drawable.ic_check_update);
+					mProgressBar.setVisibility(View.GONE);
                     Log.v(TAG, "updateMessages:STATE_CHECK = mUpdatePackage != null");
                 }
                 Log.v(TAG, "updateMessages:STATE_CHECK = mUpdatePackage == null");
@@ -173,6 +189,7 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
                             mUpdatePackage.getVersion(),
                             Formatter.formatShortFileSize(this, Long.decode(mUpdatePackage.getSize()))));
                     mButton.setImageResource(R.drawable.ic_download_update);
+					mProgressBar.setVisibility(View.GONE);
                     Log.v(TAG, "updateMessages:STATE_FOUND = " + Formatter.formatShortFileSize(this, Long.decode(mUpdatePackage.getSize())));
                 }
                 Log.v(TAG, "updateMessages:STATE_FOUND = mRomUpdater.isScanning || mRom == null");
@@ -181,18 +198,21 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
                 mToolbar.setText(R.string.downloading_title);
                 mMessage.setText(String.format(getString(R.string.downloading_text), "0%"));
                 mButton.setImageResource(R.drawable.ic_cancel_download);
+				mProgressBar.setVisibility(View.VISIBLE);
                 Log.v(TAG, "updateMessages:STATE_DOWNLOADING = " + String.format(getString(R.string.downloading_text), "0%"));
                 break;
             case STATE_ERROR:
                 mToolbar.setText(R.string.download_failed_title);
                 mMessage.setText(R.string.download_failed_text);
                 mButton.setImageResource(R.drawable.ic_check_update);
+				mProgressBar.setVisibility(View.GONE);
                 Log.v(TAG, "updateMessages:STATE_ERROR");
                 break;
             case STATE_INSTALL:
                 mToolbar.setText(R.string.install_title);
                 mMessage.setText(R.string.install_text);
                 mButton.setImageResource(R.drawable.ic_install_update);
+				mProgressBar.setVisibility(View.GONE);
                 Log.v(TAG, "updateMessages:STATE_INSTALL");
                 break;
         }
