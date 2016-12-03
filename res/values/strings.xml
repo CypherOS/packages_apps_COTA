@@ -9,7 +9,7 @@
 
     <!-- Update available -->
     <string name="update_found_title">New update available</string>
-    <string name="update_found_text">CypherOS %1$s is available.\n\nTap on the button below to begin downloading. To get the latest information on what is new in this update take a look at our news post.\n\nThe update requires a restart.\nUpdate size: %2$s</string>
+    <string name="update_found_text">Version: %1$s is available\n\nThis update provides general performance and maintenance updates for your device. You can find more information at http://cypheros.co/bulletin\nTo begin the update, tap on the download button below\n\nThis update requires a restart\nUpdate Package: %2$s</string>
 
 	<!-- Update checking message -->
 	<string name="update_checking">Checking for updates....</string>
@@ -32,9 +32,9 @@
     <string name="md5_install_anyway">Continue</string>
 
     <!-- Reboot -->
-    <string name="alert_reboot_install_title">Install update</string>
-    <string name="alert_reboot_one_message">Your device will reboot and install the update.</string>
-    <string name="alert_reboot_now">Install now</string>
+    <string name="alert_reboot_install_title">Update is ready</string>
+    <string name="alert_reboot_one_message">Your device will reboot and apply the update package. Please backup your data as it may be wiped during the update process.</string>
+    <string name="alert_reboot_now">Install</string>
 
     <!-- Errors -->
     <string name="error_cannot_resume">Error: The download couldn\'t be resumed</string>
