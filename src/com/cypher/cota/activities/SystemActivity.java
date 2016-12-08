@@ -7,13 +7,13 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.Formatter;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.util.Log;
 
@@ -59,18 +59,18 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
 
     private CoordinatorLayout mCoordinatorLayout;
     private TextView mMessage;
-    private FloatingActionButton mButton;
-    private TextView mToolbar;
+    private Button mButton;
+    private TextView mHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_system);
 
-        mToolbar = (TextView) findViewById(R.id.toolbar);
+        mHeader = (TextView) findViewById(R.id.header);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         mMessage = (TextView) findViewById(R.id.message);
-        mButton = (FloatingActionButton) findViewById(R.id.fab);
+        mButton = (Button) findViewById(R.id.action);
 
         mUpdatePackage = null;
         DownloadHelper.init(this, this);
@@ -158,41 +158,41 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
             default:
             case STATE_CHECK:
                 if (mUpdatePackage == null) {
-                    mToolbar.setText(R.string.no_updates_title);
+                    mHeader.setText(R.string.no_updates_title);
                     mMessage.setText(R.string.no_updates_text);
-                    mButton.setImageResource(R.drawable.ic_check_update);
+                    mButton.setText(R.string.no_updates_check);
                     Log.v(TAG, "updateMessages:STATE_CHECK = mUpdatePackage != null");
                 }
                 Log.v(TAG, "updateMessages:STATE_CHECK = mUpdatePackage == null");
                 break;
             case STATE_FOUND:
                 if (!mRomUpdater.isScanning() && mUpdatePackage != null) {
-                    mToolbar.setText(R.string.update_found_title);
+                    mHeader.setText(R.string.update_found_title);
                     mMessage.setText(String.format(
                             getResources().getString(R.string.update_found_text),
                             mUpdatePackage.getVersion(),
                             Formatter.formatShortFileSize(this, Long.decode(mUpdatePackage.getSize()))));
-                    mButton.setImageResource(R.drawable.ic_download_update);
+                    mButton.setText(R.string.update_found_download);
                     Log.v(TAG, "updateMessages:STATE_FOUND = " + Formatter.formatShortFileSize(this, Long.decode(mUpdatePackage.getSize())));
                 }
                 Log.v(TAG, "updateMessages:STATE_FOUND = mRomUpdater.isScanning || mRom == null");
                 break;
             case STATE_DOWNLOADING:
-                mToolbar.setText(R.string.downloading_title);
+                mHeader.setText(R.string.downloading_title);
                 mMessage.setText(String.format(getString(R.string.downloading_text), "0%"));
-                mButton.setImageResource(R.drawable.ic_cancel_download);
+                mButton.setText(R.string.downloading_cancel);
                 Log.v(TAG, "updateMessages:STATE_DOWNLOADING = " + String.format(getString(R.string.downloading_text), "0%"));
                 break;
             case STATE_ERROR:
-                mToolbar.setText(R.string.download_failed_title);
+                mHeader.setText(R.string.download_failed_title);
                 mMessage.setText(R.string.download_failed_text);
-                mButton.setImageResource(R.drawable.ic_check_update);
+                mButton.setText(R.string.no_updates_check);
                 Log.v(TAG, "updateMessages:STATE_ERROR");
                 break;
             case STATE_INSTALL:
-                mToolbar.setText(R.string.install_title);
+                mHeader.setText(R.string.install_title);
                 mMessage.setText(R.string.install_text);
-                mButton.setImageResource(R.drawable.ic_install_update);
+                mButton.setText(R.string.install_action);
                 Log.v(TAG, "updateMessages:STATE_INSTALL");
                 break;
         }
@@ -200,7 +200,7 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
 
     @Override
     public void onClick(View v) {
-		if (Constants.DEBUG) Log.d(TAG, "Fab clicked. mState = " + mState);
+		if (Constants.DEBUG) Log.d(TAG, "Button clicked. mState = " + mState);
         switch (mState) {
             default:
             case STATE_CHECK:
@@ -284,7 +284,6 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
         if (md5 != null && !"".equals(md5)) {
             final Snackbar md5Snackbar = Snackbar.make(mCoordinatorLayout, R.string.calculating_md5, Snackbar.LENGTH_INDEFINITE);
             md5Snackbar.show();
-			mButton.hide();
             new Thread() {
                 public void run() {
                     final String calculatedMd5 = FileUtils.md5(file);
@@ -309,7 +308,6 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
     }
 
     private void reallyAddFile(final File file) {
-		mButton.show();
         mFiles.add(file);
     }
 
