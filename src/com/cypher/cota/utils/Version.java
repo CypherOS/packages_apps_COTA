@@ -96,7 +96,6 @@ public class Version implements Serializable {
     }
 
     public String toString() {
-        return mMajor + "." + mMinor + (mMaintenance > 0 ? "." + mMaintenance : "")
-                + " (" + mDate + ")";
+        return mMajor + "." + mMinor + (mMaintenance > 0 ? "." + mMaintenance);
     }
 }
