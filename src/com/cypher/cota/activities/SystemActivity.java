@@ -60,14 +60,14 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
     private CoordinatorLayout mCoordinatorLayout;
     private TextView mMessage;
     private FloatingActionButton mButton;
-    private TextView mToolbar;
+    private TextView mHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_system);
 
-        mToolbar = (TextView) findViewById(R.id.toolbar);
+        mHeader = (TextView) findViewById(R.id.header);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         mMessage = (TextView) findViewById(R.id.message);
         mButton = (FloatingActionButton) findViewById(R.id.fab);
@@ -158,7 +158,7 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
             default:
             case STATE_CHECK:
                 if (mUpdatePackage == null) {
-                    mToolbar.setText(R.string.no_updates_title);
+                    mHeader.setText(R.string.no_updates_title);
                     mMessage.setText(R.string.no_updates_text);
                     mButton.setImageResource(R.drawable.ic_check_update);
                     Log.v(TAG, "updateMessages:STATE_CHECK = mUpdatePackage != null");
@@ -167,7 +167,7 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
                 break;
             case STATE_FOUND:
                 if (!mRomUpdater.isScanning() && mUpdatePackage != null) {
-                    mToolbar.setText(R.string.update_found_title);
+                    mHeader.setText(R.string.update_found_title);
                     mMessage.setText(String.format(
                             getResources().getString(R.string.update_found_text),
                             mUpdatePackage.getVersion(),
@@ -178,19 +178,19 @@ public class SystemActivity extends AppCompatActivity implements FloatingActionB
                 Log.v(TAG, "updateMessages:STATE_FOUND = mRomUpdater.isScanning || mRom == null");
                 break;
             case STATE_DOWNLOADING:
-                mToolbar.setText(R.string.downloading_title);
+                mHeader.setText(R.string.downloading_title);
                 mMessage.setText(String.format(getString(R.string.downloading_text), "0%"));
                 mButton.setImageResource(R.drawable.ic_cancel_download);
                 Log.v(TAG, "updateMessages:STATE_DOWNLOADING = " + String.format(getString(R.string.downloading_text), "0%"));
                 break;
             case STATE_ERROR:
-                mToolbar.setText(R.string.download_failed_title);
+                mHeader.setText(R.string.download_failed_title);
                 mMessage.setText(R.string.download_failed_text);
                 mButton.setImageResource(R.drawable.ic_check_update);
                 Log.v(TAG, "updateMessages:STATE_ERROR");
                 break;
             case STATE_INSTALL:
-                mToolbar.setText(R.string.install_title);
+                mHeader.setText(R.string.install_title);
                 mMessage.setText(R.string.install_text);
                 mButton.setImageResource(R.drawable.ic_install_update);
                 Log.v(TAG, "updateMessages:STATE_INSTALL");
