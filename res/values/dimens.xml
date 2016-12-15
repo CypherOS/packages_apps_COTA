@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="header_image_size">198dp</dimen>
-    <dimen name="header_title_size">12dp</dimen>
+    <dimen name="header_title_size">72dp</dimen>
     <dimen name="header_total_size">270dp</dimen>
     <dimen name="header_text_size">28sp</dimen>
-    <dimen name="header_padding">24dp</dimen>
+    <dimen name="header_padding">20dp</dimen>
     <dimen name="header_elevation">4dp</dimen>
 
     <dimen name="text_size">14sp</dimen>
