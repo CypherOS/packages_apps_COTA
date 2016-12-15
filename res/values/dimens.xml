@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="header_image_size">198dp</dimen>
-    <dimen name="header_title_size">12dp</dimen>
+    <dimen name="header_title_size">72dp</dimen>
     <dimen name="header_total_size">270dp</dimen>
-    <dimen name="header_text_size">28sp</dimen>
-    <dimen name="header_padding">24dp</dimen>
     <dimen name="header_elevation">4dp</dimen>
+  
+    <!-- Header Image -->
+    <dimen name="header_image_padding_left">12dp</dimen>
 
-    <dimen name="text_size">14sp</dimen>
-    <dimen name="text_padding">20dp</dimen>
+    <!-- Header -->
+    <dimen name="header_text_size">28sp</dimen>
+    <dimen name="header_padding_top">10dp</dimen>
+    <dimen name="header_padding_bottom">10dp</dimen>
+    <dimen name="header_padding_left">12dp</dimen>
+
+    <!-- Message -->
+    <dimen name="message_text_size">14sp</dimen>
+    <dimen name="message_padding_left">12dp</dimen>
+    <dimen name="message_padding_bottom">20dp</dimen>
     <dimen name="text_line_spacing">5dp</dimen>
     <dimen name="text_extra_line_spacing">20dp</dimen>
 </resources>
