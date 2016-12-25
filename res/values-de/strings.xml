@@ -1,33 +1,38 @@
 <resources>
     <!-- GENERAL -->
-    <string name="app_name">System Update</string>
+    <string name="app_name">Systemaktualisierung</string>
 	<string name="update_label">CypherOS</string>
 
     <!-- Up To Date -->
-    <string name="no_updates_title">System Update</string>
+    <string name="no_updates_title">Systemaktualisierung</string>
     <string name="no_updates_text">Dein Gerät ist auf dem neuesten Stand!</string>
+	<string name="no_updates_check">Überprüfen</string>
 
     <!-- Update available -->
     <string name="update_found_title">Neues Update ist verfügbar!</string>
-    <string name="update_found_text">CypherOS %1$s ist verfügbar.\n\nDrück auf den Knopf unten, um zu updaten. Was bei diesem Update neu hinzugekommen ist, kannst Du in unseren Post nachsehen.\n\nUm das Update zu installieren, wird ein Neustart benötigt.\nUpdate size: %2$s</string>
-
+    <string name="update_found_text">CypherOS %1$s ist verfügbar.\n\nDrück auf den Knopf unten, um zu updaten. Was bei diesem Update neu hinzugekommen ist, kannst Du in unserem Post nachsehen.\n\nUm das Update zu installieren, wird ein Neustart benötigt.\nUpdate size: %2$s</string>
+    <string name="update_found_notif">Tippe, um mehr zu erfahren und zu downloaden</string>
+	<string name="update_found_download">Download</string>
+	
 	<!-- Update checking message -->
 	<string name="update_checking">Suche nach Updates...</string>
 	
     <!-- Downloading update -->
     <string name="downloading_title">Lädt Update herunter...</string>
-    <string name="downloading_text">Am runterladen... %1$s\nDrück auf den Knopf, um den Download abzubrechen</string>
+    <string name="downloading_text">Am runterladen... %1$s\nTippen, um den Download abzubrechen</string>
+	<string name="downloading_cancel">Abbrechen</string>
 
     <!-- Download failed -->
     <string name="download_failed_title">Download fehlgeschlagen</string>
-    <string name="download_failed_text">Update fehlgeschlagen.\nDrück auf den Knopf unten, um nochmal nach Updates zu suchen.</string>
+    <string name="download_failed_text">Update fehlgeschlagen.\nTippen, um nochmal nach Updates zu suchen.</string>
 
     <!-- Install -->
     <string name="install_title">Update Installieren</string>
-    <string name="install_text">Update erfolgreich runtergeladen.\n Drück auf den Knopf unten, um das Update zu installieren.</string>
+    <string name="install_text">Update erfolgreich runtergeladen.\n Tippen, um das Update zu installieren.</string>
+	<string name="install_action">Installieren</string>	
 
     <!-- MD5 -->
-    <string name="calculating_md5">Errechne MD5 Checksum</string>
+    <string name="calculating_md5">Berechne MD5 Checksum</string>
     <string name="md5_mismatch">MD5 falsch</string>
     <string name="md5_install_anyway">Trotzdem Updaten</string>
 
