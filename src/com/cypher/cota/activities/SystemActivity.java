@@ -56,7 +56,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
     private List<File> mFiles = new ArrayList<>();
 
     private NotificationUtils.NotificationInfo mNotificationInfo;
-	private NotificationUtils mOnCompleted;
+	private NotificationUtils mNotifUtils;
 
     private CoordinatorLayout mCoordinatorLayout;
     private TextView mMessage;
@@ -277,7 +277,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
             mState = STATE_INSTALL;
             updateMessages((PackageInfo) null);
             addFile(uri, md5);
-			mOnCompleted.onCompleted(NOTIFICATION_ID);
+			mNotifUtils.onCompleted(getContext());
         } else {
             mState = STATE_CHECK;
             mRomUpdater.check(true);
