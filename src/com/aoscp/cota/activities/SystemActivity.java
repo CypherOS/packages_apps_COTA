@@ -174,9 +174,9 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
                 if (mUpdatePackage == null) {
                     mHeader.setText(R.string.no_updates_title);
                     mMessage.setText(String.format(
-			    getResources().getString(R.string.no_updates_text),
-			    DeviceInfoUtils.getDevice(),
-                            DeviceInfoUtils.getAoscpVersion()));
+			        getResources().getString(R.string.no_updates_text),
+			        DeviceInfoUtils.getDevice(),
+                    DeviceInfoUtils.getAoscpVersion()));
                     mButton.setText(R.string.no_updates_check);
                     Log.v(TAG, "updateMessages:STATE_CHECK = mUpdatePackage != null");
                 }
@@ -188,7 +188,8 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
                     mMessage.setText(String.format(
                             getResources().getString(R.string.update_found_text),
                             mUpdatePackage.getVersion(),
-			    DeviceInfoUtils.getDevice(),
+			                DeviceInfoUtils.getDevice(),
+							mUpdatePackage.getText(),
                             Formatter.formatShortFileSize(this, Long.decode(mUpdatePackage.getSize()))));
                     mButton.setText(R.string.update_found_download);
                     Log.v(TAG, "updateMessages:STATE_FOUND = " + Formatter.formatShortFileSize(this, Long.decode(mUpdatePackage.getSize())));
