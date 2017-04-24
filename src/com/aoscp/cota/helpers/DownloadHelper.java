@@ -231,10 +231,11 @@ public class DownloadHelper {
         sCallback.onDownloadFinished(null, null);
     }
 
-    private static void downloadSuccesful() {
+    private static void downloadSuccesful(Context context) {
         sDownloadingRom = false;
         PreferenceUtils.setDownloadRomId(sContext, null, null, null);
         sUpdateHandler.removeCallbacks(sUpdateProgress);
+		NotificationUtils.onCompleted(context);
     }
 
     private static void cancelDownload(final long id) {
