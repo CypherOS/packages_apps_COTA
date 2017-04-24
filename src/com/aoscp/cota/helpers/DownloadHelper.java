@@ -34,6 +34,7 @@ import android.util.Log;
 import com.aoscp.cota.R;
 import com.aoscp.cota.utils.FileUtils;
 import com.aoscp.cota.utils.PreferenceUtils;
+import com.aoscp.cota.utils.NotificationUtils;
 
 import java.io.File;
 
@@ -150,7 +151,7 @@ public class DownloadHelper {
                                 .getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
                         sCallback.onDownloadFinished(Uri.parse(uriString), md5);
                     }
-                    downloadSuccesful();
+                    downloadSuccesful(Context context);
                     break;
                 default:
                     cancelDownload(id);
@@ -185,7 +186,7 @@ public class DownloadHelper {
             if (FileUtils.md5(ROMFile) == md5) {
                 Log.v(TAG, "downloadFile:romFile MD5 matches remote, marking file as downloaded");
 
-                downloadSuccesful();
+                downloadSuccesful(Context context);
 
                 return;
             }
@@ -231,10 +232,11 @@ public class DownloadHelper {
         sCallback.onDownloadFinished(null, null);
     }
 
-    private static void downloadSuccesful() {
+    private static void downloadSuccesful(Context context) {
         sDownloadingRom = false;
         PreferenceUtils.setDownloadRomId(sContext, null, null, null);
         sUpdateHandler.removeCallbacks(sUpdateProgress);
+		NotificationUtils.onCompleted(context);
     }
 
     private static void cancelDownload(final long id) {
