@@ -154,6 +154,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
     public void versionFound(PackageInfo[] info) {
 		//An update has been found
         mState = STATE_FOUND;
+		NotificationUtils.onAvailable(getContext(), info);
 		if (info != null && info.length > 0) {
             if(FileUtils.isOnDownloadList(this, info[0].getFilename())) {
                 //Now that the package is download, lets queue the install
@@ -304,7 +305,6 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
             mState = STATE_INSTALL;
             updateMessages((PackageInfo) null);
             addFile(uri, md5);
-			mNotifUtils.onCompleted(getContext());
         } else {
             mState = STATE_CHECK;
             mRomUpdater.check(true);
