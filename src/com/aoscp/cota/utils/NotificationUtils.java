@@ -55,6 +55,7 @@ public class NotificationUtils {
 	
 	public static void onCompleted(Context context) {
         Resources resources = context.getResources();
+		int color = resources.getColor(R.color.colorPrimary);
 
         Intent intent = new Intent(context, SystemActivity.class);
         NotificationInfo fileInfo = new NotificationInfo();
@@ -64,6 +65,7 @@ public class NotificationUtils {
 		                        PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+		        .setColor(color)
                 .setContentText(resources.getString(R.string.update_downloaded_notif))
                 .setSmallIcon(R.drawable.ic_update_notification)
 				.setAutoCancel(true)
