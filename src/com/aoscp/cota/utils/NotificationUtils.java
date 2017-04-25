@@ -50,7 +50,11 @@ public class NotificationUtils {
 
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+		if (intent.isActivityActive()) {
+            startActivity(intent);
+        } else {
+            mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+        }
     }
 	
 	public static void onCompleted(Context context) {
