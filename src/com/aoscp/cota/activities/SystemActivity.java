@@ -194,6 +194,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
                 break;
             case STATE_FOUND:
                 if (!mRomUpdater.isScanning() && mUpdatePackage != null) {
+					NotificationUtils.onAvailable(getContext(), info[]);
                     mHeader.setText(R.string.update_found_title);
                     mMessage.setText(String.format(
                             getResources().getString(R.string.update_found_text),
@@ -304,7 +305,6 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
             mState = STATE_INSTALL;
             updateMessages((PackageInfo) null);
             addFile(uri, md5);
-			mNotifUtils.onCompleted(getContext());
         } else {
             mState = STATE_CHECK;
             mRomUpdater.check(true);

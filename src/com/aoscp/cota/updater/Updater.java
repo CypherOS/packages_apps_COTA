@@ -115,9 +115,6 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
             lastUpdates = list.toArray(new PackageInfo[list.size()]);
             if (lastUpdates.length > 0) {
                 mServerWorks = true;
-                if (mFromAlarm) {
-                    NotificationUtils.onAvailable(getContext(), lastUpdates);
-                }
             } else {
                 if (error != null && !error.isEmpty()) {
                     if (versionError(error)) {
