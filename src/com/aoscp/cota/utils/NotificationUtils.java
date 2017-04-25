@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
 import com.aoscp.cota.R;
+import com.aoscp.cota.App;
 import com.aoscp.cota.activities.SystemActivity;
 import com.aoscp.cota.updater.Updater;
 
@@ -18,6 +19,8 @@ public class NotificationUtils {
     public static final String FILES_INFO = "com.aoscp.cota.Utils.FILES_INFO";
     public static final int NOTIFICATION_ID = 122303235;
     private static Updater.PackageInfo[] sPackageInfosRom = new Updater.PackageInfo[0];
+	
+	private App mApp;
 
     public static void onAvailable(Context context, Updater.PackageInfo[] infosRom) {
         Resources resources = context.getResources();
@@ -50,11 +53,20 @@ public class NotificationUtils {
 
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+		notifyAvailibleView();
     }
+	
+	public void notifyAvailibleView() {
+		if (mApp.isSystemUpdateInView()) {
+			mNotificationManager.cancel(NOTIFICATION_ID);
+	    } else {
+			mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+		}
+	}
 	
 	public static void onCompleted(Context context) {
         Resources resources = context.getResources();
+		int color = resources.getColor(R.color.colorPrimary);
 
         Intent intent = new Intent(context, SystemActivity.class);
         NotificationInfo fileInfo = new NotificationInfo();
@@ -64,6 +76,7 @@ public class NotificationUtils {
 		                        PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+		        .setColor(color)
                 .setContentText(resources.getString(R.string.update_downloaded_notif))
                 .setSmallIcon(R.drawable.ic_update_notification)
 				.setAutoCancel(true)
