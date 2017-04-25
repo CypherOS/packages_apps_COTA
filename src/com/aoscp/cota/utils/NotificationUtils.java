@@ -29,6 +29,7 @@ public class NotificationUtils {
             infosRom = sPackageInfosRom;
         }
 
+		SystemActivity act = new SystemActivity();
         Intent intent = new Intent(context, SystemActivity.class);
         NotificationInfo fileInfo = new NotificationInfo();
         fileInfo.mNotificationId = NOTIFICATION_ID;
@@ -42,7 +43,6 @@ public class NotificationUtils {
                 .setContentText(resources.getString(R.string.update_found_notif))
                 .setSmallIcon(R.drawable.ic_update_notification)
 				.setAutoCancel(true)
-                .setContentIntent(pIntent)
                 .setOngoing(true);
 				
 		builder.setContentTitle(resources.getString(R.string.update_label) + " "
@@ -50,7 +50,11 @@ public class NotificationUtils {
 
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+		if (act.isActivityActive()) {
+            builder.setContentIntent(pIntent);
+        } else {
+            mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+        }
     }
 	
 	public static void onCompleted(Context context) {

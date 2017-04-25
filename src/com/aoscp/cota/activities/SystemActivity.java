@@ -63,6 +63,8 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
 	
     private NotificationUtils.NotificationInfo mNotificationInfo;
     private NotificationUtils mNotifUtils;
+	
+	private boolean mActivityActive;
       
     private Context mContext;
       
@@ -81,6 +83,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_system);
+		mActivityActive = false;
 
         mHeader = (TextView) findViewById(R.id.header);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
@@ -129,12 +132,27 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
             }
         }
     }
+	
+	@SuppressLint("MissingSuperCall")
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mActivityActive = true;
+    }
+	
+	@SuppressLint("MissingSuperCall")
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mActivityActive = false;
+    }
 
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onResume() {
         super.onResume();
         DownloadHelper.registerCallback(this);
+		mActivityActive = true;
     }
 
     @SuppressLint("MissingSuperCall")
@@ -142,6 +160,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
     protected void onPause() {
         super.onPause();
         DownloadHelper.unregisterCallback();
+		mActivityActive = false;
     }
 	
     @Override
@@ -304,7 +323,6 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
             mState = STATE_INSTALL;
             updateMessages((PackageInfo) null);
             addFile(uri, md5);
-			mNotifUtils.onCompleted(getContext());
         } else {
             mState = STATE_CHECK;
             mRomUpdater.check(true);
@@ -357,6 +375,10 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
                     }
                 })
                 .show();
+    }
+	
+	public boolean isActivityActive() {
+        return mActivityActive;
     }
 
     @Override
