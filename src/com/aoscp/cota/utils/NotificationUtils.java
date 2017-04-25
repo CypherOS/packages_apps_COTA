@@ -42,7 +42,6 @@ public class NotificationUtils {
                 .setContentText(resources.getString(R.string.update_found_notif))
                 .setSmallIcon(R.drawable.ic_update_notification)
 				.setAutoCancel(true)
-                .setContentIntent(pIntent)
                 .setOngoing(true);
 				
 		builder.setContentTitle(resources.getString(R.string.update_label) + " "
@@ -50,7 +49,11 @@ public class NotificationUtils {
 
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+		if (SystemActivity.isActivityActive()) {
+            builder.setContentIntent(pIntent);
+        } else {
+            mNotificationManager.notify(NOTIFICATION_ID, builder.build());
+        }
     }
 	
 	public static void onCompleted(Context context) {
