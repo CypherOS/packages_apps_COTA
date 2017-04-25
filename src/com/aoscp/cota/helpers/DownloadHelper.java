@@ -34,6 +34,7 @@ import android.util.Log;
 import com.aoscp.cota.R;
 import com.aoscp.cota.utils.FileUtils;
 import com.aoscp.cota.utils.PreferenceUtils;
+import com.aoscp.cota.utils.NotificationUtils;
 
 import java.io.File;
 
@@ -235,6 +236,7 @@ public class DownloadHelper {
         sDownloadingRom = false;
         PreferenceUtils.setDownloadRomId(sContext, null, null, null);
         sUpdateHandler.removeCallbacks(sUpdateProgress);
+		NotificationUtils.onCompleted(sContext);
     }
 
     private static void cancelDownload(final long id) {
