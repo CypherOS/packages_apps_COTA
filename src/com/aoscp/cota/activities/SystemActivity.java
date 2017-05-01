@@ -27,13 +27,13 @@ import com.aoscp.cota.helpers.DownloadHelper;
 import com.aoscp.cota.helpers.RebootHelper;
 import com.aoscp.cota.helpers.RecoveryHelper;
 import com.aoscp.cota.receivers.DownloadReceiver;
+import com.aoscp.cota.services.UpdateService;
 import com.aoscp.cota.updater.RomUpdater;
 import com.aoscp.cota.updater.Updater.PackageInfo;
 import com.aoscp.cota.updater.Updater.UpdaterListener;
 import com.aoscp.cota.utils.Constants;
 import com.aoscp.cota.utils.DeviceInfoUtils;
 import com.aoscp.cota.utils.FileUtils;
-import com.aoscp.cota.utils.NotificationUtils;
 
 import org.piwik.sdk.DownloadTracker;
 import org.piwik.sdk.PiwikApplication;
@@ -62,8 +62,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
 
 	private DeviceInfoUtils mDeviceUtils;
 	
-    private NotificationUtils.NotificationInfo mNotificationInfo;
-    private NotificationUtils mNotifUtils;
+    private UpdateService.NotificationInfo mNotificationInfo;
       
     private Context mContext;
       
@@ -82,6 +81,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+		UpdateService.start(this);
         setContentView(R.layout.activity_system);
 
         mHeader = (TextView) findViewById(R.id.header);
@@ -109,7 +109,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
         }
 
         if (mNotificationInfo != null) {
-            if (mNotificationInfo.mNotificationId == NotificationUtils.NOTIFICATION_ID) {
+            if (mNotificationInfo.mNotificationId == UpdateService.NOTIFICATION_UPDATE) {
                 mRomUpdater.setLastUpdates(mNotificationInfo.mPackageInfosRom);
             } else {
                 mRomUpdater.check(true);
@@ -126,12 +126,20 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
     protected void onNewIntent(Intent intent) {
         mNotificationInfo = null;
         if (intent != null && intent.getExtras() != null) {
-            mNotificationInfo = (NotificationUtils.NotificationInfo) intent.getSerializableExtra(NotificationUtils.FILES_INFO);
+            mNotificationInfo = (UpdateService.NotificationInfo) intent.getSerializableExtra(UpdateService.FILES_INFO);
             if (intent.getBooleanExtra(DownloadReceiver.CHECK_DOWNLOADS_FINISHED, false)) {
                 DownloadHelper.checkDownloadFinished(this,
                         intent.getLongExtra(DownloadReceiver.CHECK_DOWNLOADS_ID, -1L));
             }
         }
+    }
+	
+	@SuppressLint("MissingSuperCall")
+    @Override
+    protected void onStart() {
+        super.onStart();
+		UpdateService.stopNotificationUpdate();
+		UpdateService.stopNotificationInstall();
     }
 
     @SuppressLint("MissingSuperCall")
@@ -139,6 +147,8 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
     protected void onResume() {
         super.onResume();
         DownloadHelper.registerCallback(this);
+		UpdateService.stopNotificationUpdate();
+		UpdateService.stopNotificationInstall();
     }
 
     @SuppressLint("MissingSuperCall")
@@ -146,6 +156,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
     protected void onPause() {
         super.onPause();
         DownloadHelper.unregisterCallback();
+		UpdateService.startNotificationInstall(getContext());
     }
 	
     @Override
@@ -186,10 +197,12 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
             default:
             case STATE_CHECK:
                 if (mUpdatePackage == null) {
+					UpdateService.stopNotificationInstall();
                     mHeader.setText(R.string.no_updates_title);
 					mMessage.setText(String.format(
                             getResources().getString(R.string.no_updates_text),
-                            mDeviceUtils.getVersionDisplay()));
+                            mDeviceUtils.getVersionDisplay(),
+							mDeviceUtils.getRealTime()));
                     mButton.setText(R.string.no_updates_check);
 					bar.setVisibility(View.GONE);
 					mHighlights.setVisibility(View.GONE);
@@ -199,6 +212,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
                 break;
             case STATE_FOUND:
                 if (!mRomUpdater.isScanning() && mUpdatePackage != null) {
+					UpdateService.stopNotificationInstall();
                     mHeader.setText(R.string.update_found_title);
                     mMessage.setText(String.format(
                             getResources().getString(R.string.update_found_text),
@@ -218,6 +232,8 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
                 Log.v(TAG, "updateMessages:STATE_FOUND = mRomUpdater.isScanning || mRom == null");
                 break;
             case STATE_DOWNLOADING:
+			    UpdateService.stopNotificationUpdate();
+				UpdateService.stopNotificationInstall();
                 mHeader.setText(R.string.downloading_title);
                 mMessage.setText(R.string.downloading_text);
                 mButton.setText(R.string.downloading_cancel);
@@ -226,6 +242,8 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
                 Log.v(TAG, "updateMessages:STATE_DOWNLOADING = " + (R.string.downloading_text));
                 break;
             case STATE_ERROR:
+			    UpdateService.stopNotificationUpdate();
+				UpdateService.stopNotificationInstall();
                 mHeader.setText(R.string.download_failed_title);
                 mMessage.setText(R.string.download_failed_text);
                 mButton.setText(R.string.no_updates_check);
@@ -234,6 +252,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
                 Log.v(TAG, "updateMessages:STATE_ERROR");
                 break;
             case STATE_INSTALL:
+			    UpdateService.stopNotificationUpdate();
                 mHeader.setText(R.string.install_title);
                 mMessage.setText(R.string.install_text);
                 mButton.setText(R.string.install_action);
@@ -316,7 +335,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
             mState = STATE_INSTALL;
             updateMessages((PackageInfo) null);
             addFile(uri, md5);
-			mNotifUtils.onCompleted(getContext());
+			UpdateService.startNotificationInstall(getContext());
         } else {
             mState = STATE_CHECK;
             mRomUpdater.check(true);

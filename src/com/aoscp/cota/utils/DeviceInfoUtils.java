@@ -2,6 +2,7 @@ package com.aoscp.cota.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +17,10 @@ public class DeviceInfoUtils {
     public static String getDate() {
         return new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date(System
                 .currentTimeMillis()));
+    }
+	
+	public static String getRealTime() {
+        return new SimpleDateFormat("HH:mm", Locale.getDefault()).format(Calendar.getInstance().getTime());
     }
 
     public static String getDevice() {
