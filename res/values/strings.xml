@@ -4,8 +4,8 @@
 	<string name="update_label">CypherOS</string>
 
     <!-- Up To Date -->
-    <string name="no_updates_title">You\'re up to date</string>
-    <string name="no_updates_text">Version: %1$s\n\nTap the button below to check for updates</string>
+    <string name="no_updates_title">Your system up to date</string>
+    <string name="no_updates_text">Device: %1$s\nCypherOS version: %2$s\n\nLast checked for update at %3$s</string>
 	<string name="no_updates_check">Check</string>
 
     <!-- Update available -->
