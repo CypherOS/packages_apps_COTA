@@ -17,6 +17,10 @@ public class DeviceInfoUtils {
         return new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date(System
                 .currentTimeMillis()));
     }
+	
+	public static String getRealTime() {
+        return new SimpleDateFormat("HH:mm", Locale.getDefault()).format(Calendar.getInstance().getTime()));
+    }
 
     public static String getDevice() {
         String device = UpdateUtils.getProp(PROPERTY_DEVICE);
