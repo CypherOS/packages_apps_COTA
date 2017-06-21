@@ -139,6 +139,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
     protected void onResume() {
         super.onResume();
         DownloadHelper.registerCallback(this);
+		overridePendingTransition(R.anim.slide_next_in, R.anim.slide_next_out);
     }
 
     @SuppressLint("MissingSuperCall")
