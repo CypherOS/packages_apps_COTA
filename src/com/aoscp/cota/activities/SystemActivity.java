@@ -130,12 +130,20 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
             }
         }
     }
+	
+	@SuppressLint("MissingSuperCall")
+    @Override
+    protected void onStart() {
+        super.onStart();
+		overridePendingTransition(R.anim.slide_next_in, R.anim.slide_next_out);
+    }
 
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onResume() {
         super.onResume();
         DownloadHelper.registerCallback(this);
+		overridePendingTransition(R.anim.slide_next_in, R.anim.slide_next_out);
     }
 
     @SuppressLint("MissingSuperCall")
