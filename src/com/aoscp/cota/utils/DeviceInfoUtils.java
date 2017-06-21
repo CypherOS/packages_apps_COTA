@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 public class DeviceInfoUtils {
     private static final String MOD_VERSION = "ro.modversion";
     private static final String AOSCP_VERSION = "ro.aoscp.version";
+	private static final String AOSCP_VERSION_REL = "ro.aoscp.release";
     private static final String PROPERTY_DEVICE = "ro.aoscp.device";
     private static final String PROPERTY_DEVICE_EXT = "ro.product.device";
     private static final String PROPERTY_DEVICE_MODEL = "ro.product.model";
@@ -45,6 +46,10 @@ public class DeviceInfoUtils {
 	
 	public static String getVersionDisplay() {
         return UpdateUtils.getProp(AOSCP_VERSION);
+    }
+	
+	public static String getVersionRelease() {
+        return UpdateUtils.getProp(AOSCP_VERSION_REL);
     }
 
     public static String getReadableDate(String fileDate) {
