@@ -187,14 +187,14 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
             case STATE_CHECK:
                 if (mUpdatePackage == null) {
                     mHeader.setText(R.string.no_updates_title);
-		    mMessage.setText(String.format(
+		            mMessage.setText(String.format(
                             getResources().getString(R.string.no_updates_text),
-			    mDeviceUtils.getModel(),
-                            mDeviceUtils.getVersionDisplay(),
-			    mDeviceUtils.getRealTime()));
+				    mDeviceUtils.getVersionDisplay(),
+			        mDeviceUtils.getVersionRelease(),
+			        mDeviceUtils.getRealTime()));
                     mButton.setText(R.string.no_updates_check);
-			    bar.setVisibility(View.GONE);
-			    mHighlights.setVisibility(View.GONE);
+			        bar.setVisibility(View.GONE);
+			        mHighlights.setVisibility(View.GONE);
                     Log.v(TAG, "updateMessages:STATE_CHECK = mUpdatePackage != null");
                 }
                 Log.v(TAG, "updateMessages:STATE_CHECK = mUpdatePackage == null");
