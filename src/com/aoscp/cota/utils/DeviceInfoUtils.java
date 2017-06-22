@@ -19,7 +19,7 @@ public class DeviceInfoUtils {
         return new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date(System
                 .currentTimeMillis()));
     }
-	
+
     public static String getRealTime() {
         return new SimpleDateFormat("HH:mm aa", Locale.getDefault()).format(Calendar.getInstance().getTime());
     }
@@ -31,7 +31,7 @@ public class DeviceInfoUtils {
         }
         return device == null ? "" : device.toLowerCase();
     }
-	
+
     public static String getModel() {
         String model = UpdateUtils.getProp(PROPERTY_DEVICE_MODEL);
         if (model == null || model.isEmpty()) {
@@ -43,11 +43,11 @@ public class DeviceInfoUtils {
     public static String getExplicitVersion() {
         return UpdateUtils.getProp(MOD_VERSION);
     }
-	
+
     public static String getVersionDisplay() {
         return UpdateUtils.getProp(AOSCP_VERSION);
     }
-	
+
     public static String getVersionRelease() {
         return UpdateUtils.getProp(AOSCP_VERSION_REL);
     }

@@ -13,7 +13,7 @@
 
     <!-- Update checking message -->
     <string name="update_checking">Verificando atualizações....</string>
-	
+
     <!-- Downloading update -->
     <string name="downloading_title">Fazendo download da atualização…</string>
     <string name="downloading_text">Fazendo o download… %1$s\nToque no botão abaixo para cancelar o download</string>

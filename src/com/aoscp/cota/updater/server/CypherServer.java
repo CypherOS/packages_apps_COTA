@@ -35,8 +35,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CypherServer implements Server {
-	
-	private static final String TAG = Constants.BASE_TAG + "CypherServer";
+
+    private static final String TAG = Constants.BASE_TAG + "CypherServer";
 
     private static final String URL = "http://get.cypheros.co/updates/getter.php?d=%s";
 

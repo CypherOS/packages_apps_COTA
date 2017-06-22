@@ -34,7 +34,7 @@ public class UpdatePackage implements PackageInfo, Serializable {
     private String mPath = null;
     private String mHost = null;
     private String mSize = null;
-	private String mText = null;
+    private String mText = null;
     private String mIncrementalPath = null;
     private Version mVersion;
     private boolean mIsDelta = false;
@@ -52,7 +52,7 @@ public class UpdatePackage implements PackageInfo, Serializable {
         this.mSize = size;
         this.mPath = url;
         this.mMd5 = md5;
-		this.mText = text;
+        this.mText = text;
         mHost = mPath.replace("http://", "");
         mHost = mHost.replace("https://", "");
         mHost = mHost.substring(0, mHost.indexOf("/"));
@@ -107,8 +107,8 @@ public class UpdatePackage implements PackageInfo, Serializable {
     public String getSize() {
         return mSize;
     }
-	
-	@Override
+
+    @Override
     public String getText() {
         return mText;
     }

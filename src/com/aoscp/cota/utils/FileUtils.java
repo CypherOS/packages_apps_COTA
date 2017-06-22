@@ -88,8 +88,8 @@ public class FileUtils {
         }
         return "0";
     }
-	
-	public static File getFile(Context context, String fileName) {
+
+    public static File getFile(Context context, String fileName) {
         File downloads = initSettingsHelper(context);
         for (File f : downloads.listFiles()) {
             if (f.getName().equals(fileName)) {

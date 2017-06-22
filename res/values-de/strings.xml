@@ -1,7 +1,7 @@
 <resources>
     <!-- GENERAL -->
     <string name="app_name">System Update</string>
-	<string name="update_label">CypherOS</string>
+    <string name="update_label">CypherOS</string>
 
     <!-- Up To Date -->
     <string name="no_updates_title">System Update</string>
@@ -11,9 +11,9 @@
     <string name="update_found_title">Neues Update ist verfügbar!</string>
     <string name="update_found_text">CypherOS %1$s ist verfügbar.\n\nDrück auf den Knopf unten, um zu updaten. Was bei diesem Update neu hinzugekommen ist, kannst Du in unseren Post nachsehen.\n\nUm das Update zu installieren, wird ein Neustart benötigt.\nUpdate size: %2$s</string>
 
-	<!-- Update checking message -->
-	<string name="update_checking">Suche nach Updates...</string>
-	
+    <!-- Update checking message -->
+    <string name="update_checking">Suche nach Updates...</string>
+
     <!-- Downloading update -->
     <string name="downloading_title">Lädt Update herunter...</string>
     <string name="downloading_text">Am runterladen... %1$s\nDrück auf den Knopf, um den Download abzubrechen</string>

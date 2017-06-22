@@ -47,15 +47,15 @@ public class Version implements Serializable {
             }
             if (parts.length > 2) {
                 mMaintenance = Integer.parseInt(parts[2]);
-			}	
-			mDate = date;
+            }
+            mDate = date;
             if (Constants.DEBUG) Log.d(TAG, "got version: " + mMajor + "." + mMinor + "." + mMaintenance);
             if (Constants.DEBUG) Log.d(TAG, "got date: " + mDate);
         } catch (NumberFormatException ex) {
             // malformed version, write the log and continue
             // C derped something for sure
             ex.printStackTrace();
-			Log.d(TAG, "Whhhhhhhhyyyy?");
+            Log.d(TAG, "Whhhhhhhhyyyy?");
         }
     }
 
