@@ -74,7 +74,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
     private TextView mMessage;
 	private TextView mHighlights;
 	private TextView mSize;
-    private Button mButton;
+    private TextView mButton;
     private TextView mHeader;
 	private ProgressBar bar;
 
@@ -87,12 +87,12 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
         mHeader = (TextView) findViewById(R.id.header);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         mMessage = (TextView) findViewById(R.id.message);
-	mSize = (TextView) findViewById(R.id.size);
-        mButton = (Button) findViewById(R.id.action);
-	mHighlights = (TextView) findViewById(R.id.highlights);
+	    mSize = (TextView) findViewById(R.id.size);
+        mButton = (TextView) findViewById(R.id.action);
+	    mHighlights = (TextView) findViewById(R.id.highlights);
         mHighlights.setMovementMethod(new ScrollingMovementMethod());
 	
-	bar = (ProgressBar) findViewById(R.id.progress_bar);
+	    bar = (ProgressBar) findViewById(R.id.progress_bar);
 
         mUpdatePackage = null;
         DownloadHelper.init(this, this);
@@ -249,7 +249,7 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
         }
     }
     
-    private final Button.OnClickListener mButtonListener = new Button.OnClickListener() {
+    private final OnClickListener mButtonListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
 		    if (Constants.DEBUG) Log.d(TAG, "Button clicked. mState = " + mState);
