@@ -72,7 +72,6 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
 
     private CoordinatorLayout mCoordinatorLayout;
     private TextView mMessage;
-	private TextView mHighlights;
 	private TextView mSize;
     private Button mButton;
     private TextView mHeader;
@@ -81,18 +80,16 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-	UpdateService.start(this);
+	    UpdateService.start(this);
         setContentView(R.layout.activity_system);
 
         mHeader = (TextView) findViewById(R.id.header);
         mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         mMessage = (TextView) findViewById(R.id.message);
-	mSize = (TextView) findViewById(R.id.size);
+	    mSize = (TextView) findViewById(R.id.size);
         mButton = (Button) findViewById(R.id.action);
-	mHighlights = (TextView) findViewById(R.id.highlights);
-        mHighlights.setMovementMethod(new ScrollingMovementMethod());
 	
-	bar = (ProgressBar) findViewById(R.id.progress_bar);
+	    bar = (ProgressBar) findViewById(R.id.progress_bar);
 
         mUpdatePackage = null;
         DownloadHelper.init(this, this);
@@ -187,14 +184,13 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
             case STATE_CHECK:
                 if (mUpdatePackage == null) {
                     mHeader.setText(R.string.no_updates_title);
-		    mMessage.setText(String.format(
+		            mMessage.setText(String.format(
                             getResources().getString(R.string.no_updates_text),
-			    mDeviceUtils.getModel(),
-                            mDeviceUtils.getVersionDisplay(),
-			    mDeviceUtils.getRealTime()));
+				    mDeviceUtils.getVersionDisplay(),
+			        mDeviceUtils.getVersionRelease(),
+			        mDeviceUtils.getRealTime()));
                     mButton.setText(R.string.no_updates_check);
-			    bar.setVisibility(View.GONE);
-			    mHighlights.setVisibility(View.GONE);
+			        bar.setVisibility(View.GONE);
                     Log.v(TAG, "updateMessages:STATE_CHECK = mUpdatePackage != null");
                 }
                 Log.v(TAG, "updateMessages:STATE_CHECK = mUpdatePackage == null");
@@ -204,46 +200,40 @@ public class SystemActivity extends AppCompatActivity implements UpdaterListener
                     mHeader.setText(R.string.update_found_title);
                     mMessage.setText(String.format(
                             getResources().getString(R.string.update_found_text),
-			    mUpdatePackage.getVersion(),
-			    mDeviceUtils.getModel()));
-	            mHighlights.setText(String.format(
-                            getResources().getString(R.string.update_found_highlights),
-			    mUpdatePackage.getText()));
-		    mSize.setText(String.format(
+			        mUpdatePackage.getVersion(),
+			        mDeviceUtils.getModel(),
+					mUpdatePackage.getText()));
+		            mSize.setText(String.format(
                             getResources().getString(R.string.update_found_size),
                             Formatter.formatShortFileSize(this, Long.decode(mUpdatePackage.getSize()))));
                     mButton.setText(R.string.update_found_download);
-			    bar.setVisibility(View.GONE);
-			    mHighlights.setVisibility(View.VISIBLE);
+			        bar.setVisibility(View.GONE);
                     Log.v(TAG, "updateMessages:STATE_FOUND = " + Formatter.formatShortFileSize(this, Long.decode(mUpdatePackage.getSize())));
                 }
                 Log.v(TAG, "updateMessages:STATE_FOUND = mRomUpdater.isScanning || mRom == null");
                 break;
             case STATE_DOWNLOADING:
-	        UpdateService.stopNotificationUpdate();
+	            UpdateService.stopNotificationUpdate();
                 mHeader.setText(R.string.downloading_title);
                 mMessage.setText(R.string.downloading_text);
                 mButton.setText(R.string.downloading_cancel);
-		bar.setVisibility(View.VISIBLE);
-		mHighlights.setVisibility(View.GONE);
+		        bar.setVisibility(View.VISIBLE);
                 Log.v(TAG, "updateMessages:STATE_DOWNLOADING = " + (R.string.downloading_text));
                 break;
             case STATE_ERROR:
-	        UpdateService.stopNotificationUpdate();
+	            UpdateService.stopNotificationUpdate();
                 mHeader.setText(R.string.download_failed_title);
                 mMessage.setText(R.string.download_failed_text);
                 mButton.setText(R.string.no_updates_check);
-		bar.setVisibility(View.GONE);
-		mHighlights.setVisibility(View.GONE);
+		        bar.setVisibility(View.GONE);
                 Log.v(TAG, "updateMessages:STATE_ERROR");
                 break;
             case STATE_INSTALL:
-		UpdateService.stopNotificationUpdate();
+		        UpdateService.stopNotificationUpdate();
                 mHeader.setText(R.string.install_title);
                 mMessage.setText(R.string.install_text);
                 mButton.setText(R.string.install_action);
-		bar.setVisibility(View.GONE);
-		mHighlights.setVisibility(View.VISIBLE);
+		        bar.setVisibility(View.GONE);
                 Log.v(TAG, "updateMessages:STATE_INSTALL");
                 break;
         }
