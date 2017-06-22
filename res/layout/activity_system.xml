@@ -104,20 +104,33 @@
             android:lineSpacingExtra="@dimen/message_line_spacing"
             android:layout_marginLeft="@dimen/margin_sides"
             android:layout_marginBottom="@dimen/message_margin_bottom"
-            android:textColor="@color/textColor"
+            android:textColor="@color/messageTextColor"
             android:textSize="@dimen/message_text_size" />
-
-        <Button
+			
+		<ImageView
+            android:id="@+id/buttonimage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:layout_below="@id/size"
+            android:contentDescription="@null"
+            android:layout_marginLeft="@dimen/margin_sides"
+            android:layout_marginRight="@dimen/margin_sides"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:maxHeight="@dimen/header_icon_size"
+            android:src="@drawable/ic_button_check" />
+			
+		<TextView
             android:id="@+id/action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_below="@id/size"
-			android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/margin_sides"
-            style="@android:style/Widget.Material.Button.Colored" />
-
+            android:layout_weight="1"
+            android:textSize="16sp"
+	        android:textColor="@color/messageTextColor"
+			android:layout_toRightOf="@id/buttonimage"
+            android:layout_marginLeft="@dimen/button_margin_left"
+            android:maxLines="4" />
+			
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>
