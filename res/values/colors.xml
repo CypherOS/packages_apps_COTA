@@ -3,8 +3,11 @@
     <color name="colorPrimary">#ff4285f4</color>
     <color name="colorTitle">#000000</color>
     <color name="textColor">#1E1E1E</color>
-    <color name="messageTextColor">#1E1E1E</color>
+    <color name="messageTextColor">#3a3e4a</color>
     <color name="highlightsTextColor">#303030</color>
 
     <color name="notification_icon_color">@android:color/white</color>
+	
+	<!-- Button -->
+	<color name="buttonImageColor">#7e84a6</color>
 </resources>
