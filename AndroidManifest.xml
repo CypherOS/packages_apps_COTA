@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="eu.chainfire.opendelta"
+	package="org.aoscp.cota"
 	android:versionCode="10"
 	android:versionName="1.0" >
 	<uses-sdk
@@ -20,7 +20,7 @@
 	<uses-permission android:name="android.permission.RECOVERY" />
 
 	<application
-		android:name="eu.chainfire.opendelta.Application"
+		android:name="org.aoscp.cota.Application"
 		android:allowBackup="false"
 		android:icon="@mipmap/ic_launcher_settings"
 		android:label="@string/app_name" >
@@ -28,7 +28,7 @@
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
 		<activity
-			android:name="eu.chainfire.opendelta.MainActivity"
+			android:name="org.aoscp.cota.MainActivity"
 			android:label="@string/title"
 			android:launchMode="singleInstance"
 			android:theme="@style/Theme.OpenDelta" >
@@ -40,14 +40,12 @@
 				-->
 				<action android:name="android.settings.SYSTEM_UPDATE_SETTINGS" />
 				<!-- Show in launcher for debugging purposed -->
-				<!--
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
-				-->
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="eu.chainfire.opendelta.Shortcut"
+			android:name="org.aoscp.cota.Shortcut"
 			android:label="@string/title"
 			android:theme="@android:style/Theme.Translucent.NoTitleBar" >
 			<intent-filter>
@@ -56,18 +54,18 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="eu.chainfire.opendelta.SettingsActivity"
+			android:name="org.aoscp.cota.SettingsActivity"
 			android:label="@string/menu_settings"
 			android:theme="@style/Theme.OpenDelta.Settings" >
 		</activity>
-		<receiver android:name="eu.chainfire.opendelta.BootCompleteReceiver" >
+		<receiver android:name="org.aoscp.cota.BootCompleteReceiver" >
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED" />
 				<category android:name="android.intent.category.HOME" />
 			</intent-filter>
 		</receiver>
 		<service
-			android:name="eu.chainfire.opendelta.UpdateService"
+			android:name="org.aoscp.cota.UpdateService"
 			android:exported="false" />
 	</application>
 </manifest>

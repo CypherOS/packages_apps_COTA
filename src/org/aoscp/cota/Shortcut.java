@@ -1,4 +1,4 @@
-package eu.chainfire.opendelta;
+package org.aoscp.cota;
 
 import android.app.Activity;
 import android.os.Bundle;
