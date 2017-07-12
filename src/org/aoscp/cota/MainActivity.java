@@ -45,8 +45,6 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.Html;
 import android.text.format.DateFormat;
 import android.text.format.Formatter;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -55,23 +53,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
-    private TextView title = null;
-    private TextView sub = null;
-    private ProgressBar progress = null;
-    private Button checkNow = null;
-    private Button flashNow = null;
-    private TextView updateVersion = null;
-    private TextView extra = null;
-    private Button buildNow = null;
-    private ImageButton stopNow = null;
-    private TextView currentVersion = null;
-    private TextView lastChecked = null;
-    private TextView downloadSize = null;
+    private TextView mHeader;
+	private TextView mSize;
+	private Button mButton;
+	private ProgressBar mProgressBar;
     private Config config;
     private boolean mPermOk;
-    private TextView mSub2;
-    private TextView mProgressPercent;
-    private ImageView mOmniLogo;
 
     private static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
 
@@ -79,147 +66,52 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
-            getActionBar().setIcon(
-                    getPackageManager().getApplicationIcon(
-                            "com.android.settings"));
-        } catch (NameNotFoundException e) {
-            // The standard Settings package is not present, so we can't snatch
-            // its icon
-            Logger.ex(e);
-        }
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setElevation(0);
-
         UpdateService.start(this);
 
         setContentView(R.layout.activity_main);
 
-        title = (TextView) findViewById(R.id.text_title);
-        sub = (TextView) findViewById(R.id.progress_text);
-        mSub2 = (TextView) findViewById(R.id.progress_text2);
-        progress = (ProgressBar) findViewById(R.id.progress_bar);
-        checkNow = (Button) findViewById(R.id.button_check_now);
-        flashNow = (Button) findViewById(R.id.button_flash_now);
-        updateVersion = (TextView) findViewById(R.id.text_update_version);
-        extra = (TextView) findViewById(R.id.text_extra);
-        buildNow = (Button) findViewById(R.id.button_build_delta);
-        stopNow = (ImageButton) findViewById(R.id.button_stop);
-        currentVersion = (TextView) findViewById(R.id.text_current_version);
-        lastChecked = (TextView) findViewById(R.id.text_last_checked);
-        downloadSize = (TextView) findViewById(R.id.text_download_size);
-        mProgressPercent = (TextView) findViewById(R.id.progress_percent);
-        mOmniLogo = (ImageView) findViewById(R.id.omni_logo);
+        mHeader = (TextView) findViewById(R.id.header);
+		mMessage = (TextView) findViewById(R.id.message);
+		mButton = (Button) findViewById(R.id.action);
+		mButton.setOnClickListener(mButtonListener);
+		mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+		mSize = (TextView) findViewById(R.id.size);
 
         config = Config.getInstance(this);
         mPermOk = false;
         requestPermissions();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    private void showAbout() {
-        int thisYear = Calendar.getInstance().get(Calendar.YEAR);
-        String opendelta = (thisYear == 2013) ? "2013" : "2013-"
-                + String.valueOf(thisYear);
-        String xdelta = (thisYear == 1997) ? "1997" : "1997-"
-                + String.valueOf(thisYear);
-
-        AlertDialog dialog = (new AlertDialog.Builder(this))
-                .setTitle(R.string.app_name)
-                .setMessage(
-                        Html.fromHtml(getString(R.string.about_content)
-                                .replace("_COPYRIGHT_OPENDELTA_", opendelta)
-                                .replace("_COPYRIGHT_XDELTA_", xdelta)))
-                .setNeutralButton(android.R.string.ok, null)
-                .setCancelable(true).show();
-        TextView textView = (TextView) dialog
-                .findViewById(android.R.id.message);
-        if (textView != null)
-            textView.setTypeface(title.getTypeface());
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case android.R.id.home:
-            finish();
-            return true;
-        case R.id.settings:
-            Intent settingsActivity = new Intent(this, SettingsActivity.class);
-            startActivity(settingsActivity);
-            return true;
-        case R.id.action_about:
-            showAbout();
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
     private IntentFilter updateFilter = new IntentFilter(
             UpdateService.BROADCAST_INTENT);
     private BroadcastReceiver updateReceiver = new BroadcastReceiver() {
-        private String formatLastChecked(String filename, long ms) {
-            Date date = new Date(ms);
-            if (filename == null) {
-                if (ms == 0) {
-                    return "";
-                } else {
-                    return getString(
-                            R.string.last_checked,
-                            DateFormat.getDateFormat(MainActivity.this).format(
-                                    date),
-                            DateFormat.getTimeFormat(MainActivity.this).format(
-                                    date));
-                }
+        private static String formatLastChecked(long ms) {
+			Date date = new Date(ms);
+			if (ms == 0) {
+                return "";
             } else {
-                if (ms == 0) {
-                    return "";
-                } else {
-                    return String.format(
-                            "%s %s",
-                            filename,
-                            getString(R.string.last_checked,
-                                    DateFormat.getDateFormat(MainActivity.this)
-                                            .format(date), DateFormat
-                                            .getTimeFormat(MainActivity.this)
-                                            .format(date)));
-                }
+			    return DateFormat.getTimeFormat(MainActivity.this).format(
+                                    date));
             }
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String title = "";
-            String sub = "";
-            String sub2 = "";
-            String progressPercent = "";
-            String updateVersion = "";
-            String lastCheckedText = "";
-            String extraText = "";
             String downloadSizeText = "";
             long current = 0L;
             long total = 1L;
-            boolean enableCheck = false;
-            boolean enableFlash = false;
-            boolean enableBuild = false;
-            boolean enableStop = false;
             boolean deltaUpdatePossible = false;
             boolean fullUpdatePossible = false;
             boolean enableProgress = false;
             final SharedPreferences prefs = PreferenceManager
                     .getDefaultSharedPreferences(MainActivity.this);
+			String lastChecked = formatLastChecked(intent.getLongExtra(UpdateService.EXTRA_MS, 0));
 
             String state = intent.getStringExtra(UpdateService.EXTRA_STATE);
             // don't try this at home
             if (state != null) {
                 try {
-                    title = getString(getResources().getIdentifier(
+                    mHeader.setText(getResources().getIdentifier(
                             "state_" + state, "string", getPackageName()));
                 } catch (Exception e) {
                     // String for this state could not be found (displays empty
@@ -230,7 +122,10 @@ public class MainActivity extends Activity {
                 // use a special title then - but only once
                 if (UpdateService.STATE_ACTION_NONE.equals(state)
                         && !prefs.getBoolean(SettingsActivity.PREF_START_HINT_SHOWN, false)) {
-                    title = getString(R.string.last_checked_never_title_new);
+					mHeader.setText(R.string.header_update_unavailable);
+					mMessage.setText(String.format(
+                            getResources().getString(R.string.update_message_unavailable, lastChecked);
+					mButton.setText(R.string.update_action_check);
                 }
                 // dont spill for progress
                 if (!UpdateService.isProgressState(state)) {
@@ -239,68 +134,63 @@ public class MainActivity extends Activity {
             }
 
             if (UpdateService.STATE_ERROR_DISK_SPACE.equals(state)) {
-                enableCheck = true;
-                progress.setIndeterminate(false);
-                current = intent.getLongExtra(UpdateService.EXTRA_CURRENT,
-                        current);
-                total = intent.getLongExtra(UpdateService.EXTRA_TOTAL, total);
-
-                current /= 1024L * 1024L;
-                total /= 1024L * 1024L;
-
-                extraText = getString(R.string.error_disk_space_sub, current,
-                        total);
-                DrawableCompat.setTint(mOmniLogo.getDrawable(), ContextCompat.getColor(context, R.color.logo_err));
+				mHeader.setText(R.string.header_update_unavailable);
+				mMessage.setText(String.format(
+                            getResources().getString(R.string.update_message_unavailable, lastChecked);
+                mButton.setText(R.string.update_action_check);
+                mProgressBar.setIndeterminate(false);
             } else if (UpdateService.STATE_ERROR_UNKNOWN.equals(state)) {
-                enableCheck = true;
-                progress.setIndeterminate(false);
+				mHeader.setText(R.string.header_update_unavailable);
+				mMessage.setText(String.format(
+                            getResources().getString(R.string.update_message_unavailable, lastChecked);
+                mButton.setText(R.string.update_action_check);
+                mProgressBar.setIndeterminate(false);
             } else if (UpdateService.STATE_ERROR_UNOFFICIAL.equals(state)) {
-                enableCheck = true;
-                progress.setIndeterminate(false);
-                title = getString(R.string.state_error_not_official_title);
-                extraText = getString(R.string.state_error_not_official_extra,
-                        intent.getStringExtra(UpdateService.EXTRA_FILENAME));
-                DrawableCompat.setTint(mOmniLogo.getDrawable(), ContextCompat.getColor(context, R.color.logo_disabled));
+				mHeader.setText(R.string.header_update_unavailable);
+				mMessage.setText(String.format(
+                            getResources().getString(R.string.update_message_unavailable, lastChecked);
+                mButton.setText(R.string.update_action_check);
+                mProgressBar.setIndeterminate(false);
             } else if (UpdateService.STATE_ERROR_DOWNLOAD.equals(state)) {
-                enableCheck = true;
-                progress.setIndeterminate(false);
-                extraText = intent.getStringExtra(UpdateService.EXTRA_FILENAME);
-                DrawableCompat.setTint(mOmniLogo.getDrawable(), ContextCompat.getColor(context, R.color.logo_alert));
+				mHeader.setText(R.string.header_update_unavailable);
+				mMessage.setText(String.format(
+                            getResources().getString(R.string.update_message_unavailable, lastChecked);
+                mButton.setText(R.string.update_action_check);
+                mProgressBar.setIndeterminate(false);
             } else if (UpdateService.STATE_ERROR_CONNECTION.equals(state)) {
-                enableCheck = true;
-                progress.setIndeterminate(false);
+				mHeader.setText(R.string.header_update_unavailable);
+				mMessage.setText(String.format(
+                            getResources().getString(R.string.update_message_unavailable, lastChecked);
+                mButton.setText(R.string.update_action_check);
+                mProgressBar.setIndeterminate(false);
             } else if (UpdateService.STATE_ERROR_PERMISSIONS.equals(state)) {
-                progress.setIndeterminate(false);
+				mHeader.setText(R.string.header_update_unavailable);
+				mMessage.setText(String.format(
+                            getResources().getString(R.string.update_message_unavailable, lastChecked);
+				mButton.setText(R.string.update_action_check);
+                mProgressBar.setIndeterminate(false);
             } else if (UpdateService.STATE_ERROR_FLASH.equals(state)) {
-                enableCheck = true;
-                enableFlash = true;
-                progress.setIndeterminate(false);
+				mHeader.setText(R.string.header_update_install);
+				mMessage.setText(R.string.update_message_install);
+                mButton.setText(R.string.update_action_install);
+                mProgressBar.setIndeterminate(false);
             } else if (UpdateService.STATE_ACTION_NONE.equals(state)) {
-                enableCheck = true;
-                progress.setIndeterminate(false);
-                lastCheckedText = formatLastChecked(null,
-                        intent.getLongExtra(UpdateService.EXTRA_MS, 0));
+				mHeader.setText(R.string.header_update_unavailable);
+				mMessage.setText(String.format(
+                            getResources().getString(R.string.update_message_unavailable, lastChecked);
+                mButton.setText(R.string.update_action_check);
+                mProgressBar.setIndeterminate(false);
             } else if (UpdateService.STATE_ACTION_READY.equals(state)) {
-                enableCheck = true;
-                enableFlash = true;
-                progress.setIndeterminate(false);
-                lastCheckedText = formatLastChecked(null,
-                        intent.getLongExtra(UpdateService.EXTRA_MS, 0));
-
-                final String flashImage = prefs.getString(
-                        UpdateService.PREF_READY_FILENAME_NAME,
-                        UpdateService.PREF_READY_FILENAME_DEFAULT);
-                String flashImageBase = flashImage != UpdateService.PREF_READY_FILENAME_DEFAULT ? new File(
-                        flashImage).getName() : null;
-                if (flashImageBase != null) {
-                    updateVersion = flashImageBase.substring(0,
-                            flashImageBase.lastIndexOf('.'));
-                }
+				mHeader.setText(R.string.header_update_install);
+				mMessage.setText(R.string.update_message_install);
+                mButton.setText(R.string.update_action_install);
+                mProgressBar.setIndeterminate(false);
             } else if (UpdateService.STATE_ACTION_BUILD.equals(state)) {
-                enableCheck = true;
-                progress.setIndeterminate(false);
-                lastCheckedText = formatLastChecked(null,
-                        intent.getLongExtra(UpdateService.EXTRA_MS, 0));
+				mHeader.setText(R.string.header_update_unavailable);
+				mMessage.setText(String.format(
+                            getResources().getString(R.string.update_message_unavailable, lastChecked);
+                mButton.setText(R.string.update_action_check);
+                mProgressBar.setIndeterminate(false);
 
                 final String latestFull = prefs.getString(
                         UpdateService.PREF_LATEST_FULL_NAME,
@@ -316,56 +206,61 @@ public class MainActivity extends Activity {
 
                 deltaUpdatePossible = latestDeltaZip != null;
                 fullUpdatePossible = latestFullZip != null;
-                DrawableCompat.setTint(mOmniLogo.getDrawable(), ContextCompat.getColor(context, R.color.logo_green));
 
 
                 if (deltaUpdatePossible) {
-                    String latestDeltaBase = latestDelta.substring(0,
-                            latestDelta.lastIndexOf('.'));
-                    enableBuild = true;
-                    updateVersion = latestDeltaBase;
-                    title = getString(R.string.state_action_build_delta);
-                    DrawableCompat.setTint(mOmniLogo.getDrawable(), ContextCompat.getColor(context, R.color.logo_green));
+					mHeader.setText(R.string.header_update_available);
+					mMessage.setText(R.string.update_message_available);
+                    mButton.setText(R.string.update_action_download);
+					mButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            UpdateService.startBuild(this);
+                        }
+                    });
                 } else if (fullUpdatePossible) {
-                    String latestFullBase = latestFull.substring(0,
-                            latestFull.lastIndexOf('.'));
-                    enableBuild = true;
-                    updateVersion = latestFullBase;
-                    title = getString(R.string.state_action_build_full);
-                    DrawableCompat.setTint(mOmniLogo.getDrawable(), ContextCompat.getColor(context, R.color.logo_alert));
+					mHeader.setText(R.string.header_update_available);
+					mMessage.setText(R.string.update_message_available);
+                    mButton.setText(R.string.update_action_download);
+				    mButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            UpdateService.startBuild(this);
+                        }
+                    });
                 }
-                long downloadSize = prefs.getLong(
+                long mSize = prefs.getLong(
                         UpdateService.PREF_DOWNLOAD_SIZE, -1);
-                if(downloadSize == -1) {
+                if(mSize == -1) {
                     downloadSizeText = "";
-                } else if (downloadSize == 0) {
-                    downloadSizeText = getString(R.string.text_download_size_unknown);
+                } else if (mSize == 0) {
+                    downloadSizeText = getString(R.string.update_size_unknown);
                 } else {
-                    downloadSizeText = Formatter.formatFileSize(context, downloadSize);
+                    downloadSizeText = Formatter.formatFileSize(context, mSize);
                 }
             } else if (UpdateService.STATE_ACTION_SEARCHING.equals(state)
                     || UpdateService.STATE_ACTION_CHECKING.equals(state)) {
                 enableProgress = true;
-                progress.setIndeterminate(true);
+                mProgressBar.setIndeterminate(true);
                 current = 1;
             } else {
                 enableProgress = true;
                 if (UpdateService.STATE_ACTION_DOWNLOADING.equals(state)) {
-                    enableStop = true;
+					mHeader.setText(R.string.header_update_downloading);
+					mMessage.setText(R.string.update_message_downloading);
+					mButton.setText(R.string.update_action_cancel);
                 }
-                current = intent.getLongExtra(UpdateService.EXTRA_CURRENT,
-                        current);
                 total = intent.getLongExtra(UpdateService.EXTRA_TOTAL, total);
-                progress.setIndeterminate(false);
+                mProgressBar.setIndeterminate(false);
 
-                long downloadSize = prefs.getLong(
+                long mSize = prefs.getLong(
                         UpdateService.PREF_DOWNLOAD_SIZE, -1);
-                if(downloadSize == -1) {
+                if(mSize == -1) {
                     downloadSizeText = "";
-                } else if (downloadSize == 0) {
-                    downloadSizeText = getString(R.string.text_download_size_unknown);
+                } else if (mSize == 0) {
+                    downloadSizeText = getString(R.string.update_size_unknown);
                 } else {
-                    downloadSizeText = Formatter.formatFileSize(context, downloadSize);
+                    downloadSizeText = Formatter.formatFileSize(context, mSize);
                 }
 
                 // long --> int overflows FTL (progress.setXXX)
@@ -375,56 +270,44 @@ public class MainActivity extends Activity {
                     current /= 1024L;
                     total /= 1024L;
                 }
-
-                String filename = intent
-                        .getStringExtra(UpdateService.EXTRA_FILENAME);
-                if (filename != null) {
-                    sub = filename;
-                    long ms = intent.getLongExtra(UpdateService.EXTRA_MS, 0);
-                    progressPercent = String.format(Locale.ENGLISH, "%.0f %%",
-                                intent.getFloatExtra(UpdateService.EXTRA_PROGRESS, 0));
-
-                    if ((ms > 500) && (current > 0) && (total > 0)) {
-                        float kibps = ((float) current / 1024f)
-                                / ((float) ms / 1000f);
-                        if (progressInK)
-                            kibps *= 1024f;
-                        int sec = (int) (((((float) total / (float) current) * (float) ms) - ms) / 1000f);
-                        if (kibps < 10000) {
-                            sub2 = String.format(Locale.ENGLISH,
-                                    "%.0f KiB/s, %02d:%02d",
-                                    kibps, sec / 60, sec % 60);
-                        } else {
-                            sub2 = String.format(Locale.ENGLISH,
-                                    "%.0f MiB/s, %02d:%02d",
-                                    kibps / 1024f, sec / 60, sec % 60);
-                        }
-                    }
-                }
             }
-            MainActivity.this.title.setText(title);
-            MainActivity.this.sub.setText(sub);
-            MainActivity.this.mSub2.setText(sub2);
-            MainActivity.this.mProgressPercent.setText(progressPercent);
-            MainActivity.this.updateVersion.setText(updateVersion);
-            MainActivity.this.currentVersion.setText(config.getFilenameBase());
-            MainActivity.this.lastChecked.setText(lastCheckedText);
-            MainActivity.this.extra.setText(extraText);
-            MainActivity.this.downloadSize.setText(downloadSizeText);
+            MainActivity.this.mSize.setText(R.string.update_size, downloadSizeText);
 
-            progress.setProgress((int) current);
-            progress.setMax((int) total);
-            progress.setVisibility(!enableProgress ? View.INVISIBLE : View.VISIBLE);
-
-            checkNow.setEnabled(enableCheck ? true : false);
-            buildNow.setEnabled(enableBuild ? true : false);
-            flashNow.setEnabled(enableFlash ? true : false);
-
-            flashNow.setVisibility(enableFlash ? View.VISIBLE : View.GONE);
-            buildNow.setVisibility(!enableBuild || enableFlash ? View.GONE
-                    : View.VISIBLE);
-            stopNow.setVisibility(enableStop ? View.VISIBLE : View.GONE);
+            mProgressBar.setProgress((int) current);
+            mProgressBar.setMax((int) total);
+            mProgressBar.setVisibility(!enableProgress ? View.INVISIBLE : View.VISIBLE);
         }
+    };
+	
+	private final Button.OnClickListener mButtonListener = new Button.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+			String state = intent.getStringExtra(UpdateService.EXTRA_STATE);
+			
+			if (UpdateService.STATE_ERROR_DISK_SPACE.equals(state)) {
+				UpdateService.startCheck(this);
+			} else if (UpdateService.STATE_ERROR_UNKNOWN.equals(state)) {
+				UpdateService.startCheck(this);
+			} else if (UpdateService.STATE_ERROR_UNOFFICIAL.equals(state)) {
+				UpdateService.startCheck(this);
+			} else if (UpdateService.STATE_ERROR_DOWNLOAD.equals(state)) {
+				UpdateService.startCheck(this);
+			} else if (UpdateService.STATE_ERROR_CONNECTION.equals(state)) {
+				UpdateService.startCheck(this);
+			} else if (UpdateService.STATE_ERROR_PERMISSIONS.equals(state)) {
+				UpdateService.startCheck(this);
+			} else if (UpdateService.STATE_ERROR_FLASH.equals(state)) {
+				flashRecoveryWarning.run();
+			} else if (UpdateService.STATE_ACTION_NONE.equals(state)) {
+				UpdateService.startCheck(this);
+			} else if (UpdateService.STATE_ACTION_READY.equals(state)) {
+				flashRecoveryWarning.run();
+			} else if (UpdateService.STATE_ACTION_BUILD.equals(state)) {
+				UpdateService.startCheck(this);
+			} else if (UpdateService.STATE_ACTION_DOWNLOADING.equals(state)) {
+				stopDownload();
+			}	
+		}
     };
 
     @Override
@@ -443,25 +326,6 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         UpdateService.startUpdate(this);
-    }
-
-    public void onButtonCheckNowClick(View v) {
-        final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(this);
-        prefs.edit().putBoolean(SettingsActivity.PREF_START_HINT_SHOWN, true).commit();
-        UpdateService.startCheck(this);
-    }
-
-    public void onButtonBuildNowClick(View v) {
-        UpdateService.startBuild(this);
-    }
-
-    public void onButtonFlashNowClick(View v) {
-        flashRecoveryWarning.run();
-    }
-
-    public void onButtonStopClick(View v) {
-        stopDownload();
     }
 
     private Runnable flashRecoveryWarning = new Runnable() {
@@ -538,9 +402,7 @@ public class MainActivity extends Activity {
     private Runnable flashStart = new Runnable() {
         @Override
         public void run() {
-            checkNow.setEnabled(false);
-            flashNow.setEnabled(false);
-            buildNow.setEnabled(false);
+            mButton.setEnabled(false);
             UpdateService.startFlash(MainActivity.this);
         }
     };

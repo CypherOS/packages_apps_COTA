@@ -31,7 +31,7 @@
 			android:name="org.aoscp.cota.MainActivity"
 			android:label="@string/title"
 			android:launchMode="singleInstance"
-			android:theme="@style/Theme.OpenDelta" >
+			android:theme="@style/SystemTheme" >
 			<intent-filter android:priority="2147483647" >
 				<!--
 				Show up under Settings, About Device, System Updates.
