@@ -19,7 +19,7 @@
  * along with OpenDelta. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.chainfire.opendelta;
+package org.aoscp.cota;
 
 public class Native {
     public static native int zipadjust(String filenameIn, String filenameOut, int decompress);

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package eu.chainfire.opendelta;
+package org.aoscp.cota;
 
 import java.io.File;
 import java.text.DateFormatSymbols;
