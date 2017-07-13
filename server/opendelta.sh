@@ -24,8 +24,8 @@ BIN_MINSIGNAPK=$HOME/delta/minsignapk.jar
 BIN_XDELTA=$HOME/delta/xdelta3
 BIN_ZIPADJUST=$HOME/delta/zipadjust
 
-FILE_MATCH=omni-*.zip
-PATH_CURRENT=$HOME/omni/out/target/product/$DEVICE
+FILE_MATCH=aoscp_*.zip
+PATH_CURRENT=$HOME/cypher/out/target/product/$DEVICE
 PATH_LAST=$HOME/delta/last/$DEVICE
 
 KEY_X509=$HOME/.keys/platform.x509.pem

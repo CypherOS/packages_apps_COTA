@@ -11,5 +11,15 @@
 	<style name="ThemeActionBar" parent="@android:style/Widget.Material.ActionBar.Solid">
 		<item name="android:displayOptions"></item>
 	</style>
+	
+	<style name="SystemTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimary</item>
+        <item name="android:colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <style name="ProgressBar">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
 
 </resources>

@@ -856,11 +856,11 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
 
     private boolean isMatchingImage(String fileName) {
         try {
-            if(fileName.endsWith(".zip") && fileName.indexOf(config.getDevice()) != -1) {
+            if(fileName.startsWith(config.getFileBaseNamePrefix()) && fileName.endsWith(".zip")) {
                 String[] parts = fileName.split("-");
                 if (parts.length > 1) {
                     String version = parts[1];
-                    Version current = new Version(config.getAndroidVersion());
+                    Version current = new Version(config.getVersion());
                     Version fileVersion = new Version(version);
                     if (fileVersion.compareTo(current) >= 0) {
                         return true;
@@ -895,8 +895,8 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
                     JSONArray builds = object.getJSONArray(key);
                     for (int i = 0; i < builds.length(); i++) {
                         JSONObject build = builds.getJSONObject(i);
-                        String fileName = new File(build.getString("filename")).getName();
-                        Date timestamp = new Date(build.getLong("timestamp"));
+                        String fileName = new File(build.getString("name")).getName();
+                        Date timestamp = new Date(build.getLong("build"));
                         // latest build can have a larger micro version then what we run now
                         if (isMatchingImage(fileName) && timestamp.after(latestTimestamp)) {
                             latestBuild = fileName;
