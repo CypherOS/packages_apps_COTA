@@ -31,7 +31,7 @@
 			android:name="org.aoscp.cota.MainActivity"
 			android:label="@string/title"
 			android:launchMode="singleInstance"
-			android:theme="@style/Theme.OpenDelta" >
+			android:theme="@style/SystemTheme" >
 			<intent-filter android:priority="2147483647" >
 				<!--
 				Show up under Settings, About Device, System Updates.
@@ -56,7 +56,11 @@
 		<activity
 			android:name="org.aoscp.cota.SettingsActivity"
 			android:label="@string/menu_settings"
-			android:theme="@style/Theme.OpenDelta.Settings" >
+			android:theme="@style/Theme.OpenDelta.Settings">
+			<intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 		</activity>
 		<receiver android:name="org.aoscp.cota.BootCompleteReceiver" >
 			<intent-filter>

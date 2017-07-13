@@ -895,8 +895,8 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
                     JSONArray builds = object.getJSONArray(key);
                     for (int i = 0; i < builds.length(); i++) {
                         JSONObject build = builds.getJSONObject(i);
-                        String fileName = new File(build.getString("filename")).getName();
-                        Date timestamp = new Date(build.getLong("timestamp"));
+                        String fileName = new File(build.getString("name")).getName();
+                        Date timestamp = new Date(build.getLong("build"));
                         // latest build can have a larger micro version then what we run now
                         if (isMatchingImage(fileName) && timestamp.after(latestTimestamp)) {
                             latestBuild = fileName;
