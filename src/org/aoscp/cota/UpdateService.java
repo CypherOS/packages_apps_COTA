@@ -143,7 +143,6 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
     public static final String STATE_ACTION_READY = "action_ready";
     public static final String STATE_ERROR_DISK_SPACE = "error_disk_space";
     public static final String STATE_ERROR_UNKNOWN = "error_unknown";
-    public static final String STATE_ERROR_UNOFFICIAL = "error_unofficial";
     public static final String STATE_ACTION_BUILD = "action_build";
     public static final String STATE_ERROR_DOWNLOAD = "error_download";
     public static final String STATE_ERROR_CONNECTION = "error_connection";
@@ -856,11 +855,11 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
 
     private boolean isMatchingImage(String fileName) {
         try {
-            if(fileName.endsWith(".zip") && fileName.indexOf(config.getDevice()) != -1) {
+            if(fileName.startsWith(config.getFileBaseNamePrefix()) && fileName.endsWith(".zip")) {
                 String[] parts = fileName.split("-");
                 if (parts.length > 1) {
                     String version = parts[1];
-                    Version current = new Version(config.getAndroidVersion());
+                    Version current = new Version(config.getVersion());
                     Version fileVersion = new Version(version);
                     if (fileVersion.compareTo(current) >= 0) {
                         return true;
@@ -895,8 +894,8 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
                     JSONArray builds = object.getJSONArray(key);
                     for (int i = 0; i < builds.length(); i++) {
                         JSONObject build = builds.getJSONObject(i);
-                        String fileName = new File(build.getString("filename")).getName();
-                        Date timestamp = new Date(build.getLong("timestamp"));
+                        String fileName = new File(build.getString("name")).getName();
+                        Date timestamp = new Date(build.getLong("build"));
                         // latest build can have a larger micro version then what we run now
                         if (isMatchingImage(fileName) && timestamp.after(latestTimestamp)) {
                             latestBuild = fileName;
@@ -911,7 +910,7 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
         } catch (Exception e) {
             Logger.ex(e);
         }
-        updateState(STATE_ERROR_UNOFFICIAL, null, null, null, config.getVersion(), null);
+        updateState(null, null, null, config.getVersion(), null);
         return null;
     }
 
@@ -1127,12 +1126,6 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
         stopNotification();
         stopErrorNotification();
 
-        if (!isSupportedVersion()) {
-            // TODO - to be more generic this should maybe use the info from getNewestFullBuild
-            updateState(STATE_ERROR_UNOFFICIAL, null, null, null, config.getVersion(), null);
-            Logger.i("Ignoring request to check for updates - not compatible for update! " + config.getVersion());
-            return false;
-        }
         if (!networkState.isConnected()) {
             updateState(STATE_ERROR_CONNECTION, null, null, null, null, null);
             Logger.i("Ignoring request to check for updates - no data connection");
@@ -1736,17 +1729,13 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
         return ret;
     }
 
-    private boolean isSupportedVersion() {
-        return config.isOfficialVersion();
-    }
-
     private int getAutoDownloadValue() {
         String autoDownload = prefs.getString(SettingsActivity.PREF_AUTO_DOWNLOAD, getDefaultAutoDownloadValue());
         return Integer.valueOf(autoDownload).intValue();
     }
 
     private String getDefaultAutoDownloadValue() {
-        return isSupportedVersion() ? PREF_AUTO_DOWNLOAD_CHECK_STRING : PREF_AUTO_DOWNLOAD_DISABLED_STRING;
+        return PREF_AUTO_DOWNLOAD_CHECK_STRING : PREF_AUTO_DOWNLOAD_DISABLED_STRING;
     }
 
     private boolean isScreenStateEnabled() {
@@ -1781,7 +1770,6 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
         if (state.equals(UpdateService.STATE_ERROR_DOWNLOAD) ||
                 state.equals(UpdateService.STATE_ERROR_DISK_SPACE) ||
                 state.equals(UpdateService.STATE_ERROR_UNKNOWN) ||
-                state.equals(UpdateService.STATE_ERROR_UNOFFICIAL) ||
                 state.equals(UpdateService.STATE_ERROR_CONNECTION)) {
             return true;
         }

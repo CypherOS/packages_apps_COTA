@@ -23,7 +23,7 @@
 	<string name="url_base_update">http://get.cypheros.co/deltas/%s/</string>
 
 	<!-- URL base to find the full zip files, %s is expanded to property_device value. Path is suffixed by (expanded) filename_base -->
-	<string name="url_base_full">http://get.cypheros.co/updates/%s/</string>
+	<string name="url_base_full">http://dl.cypheros.co/%s/</string>
 
 	<!-- URL base to fetch all builds -->
 	<string name="url_base_json">http://get.cypheros.co/updates/getter.php?d=%s</string>
@@ -51,10 +51,4 @@
 	<string-array name="keep_screen_on_devices">
 		<item></item>
 	</string-array>
-
-	<string name="official_version_tag">official</string>
-	<string name="weekly_version_tag">WEEKLY</string>
-	<string name="security_version_tag">SECURITY_RELEASE</string>
-
-	<string name="android_version">ro.build.version.release</string>
 </resources>
