@@ -32,6 +32,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
 import java.net.UnknownHostException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -216,6 +217,8 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
     private int failedUpdateCount;
     private SharedPreferences prefs = null;
     private String oldFlashFilename;
+
+    private String mBadObject = null;
 
     /*
      * Using reflection voodoo instead calling the hidden class directly, to
@@ -411,7 +414,7 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
             batteryState.onSharedPreferenceChanged(sharedPreferences, key);
         }
         if (scheduler != null) {
-        	scheduler.onSharedPreferenceChanged(sharedPreferences, key);
+            scheduler.onSharedPreferenceChanged(sharedPreferences, key);
         }
     }
 
@@ -550,19 +553,19 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
         notificationManager.cancel(NOTIFICATION_ERROR);
     }
 
-    private HttpsURLConnection setupHttpsRequest(String urlStr){
+    private HttpURLConnection setupHttpsRequest(String urlStr){
         URL url;
-        HttpsURLConnection urlConnection = null;
+        HttpURLConnection urlConnection = null;
         try {
             url = new URL(urlStr);
-            urlConnection = (HttpsURLConnection) url.openConnection();
+            urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setConnectTimeout(HTTP_CONNECTION_TIMEOUT);
             urlConnection.setReadTimeout(HTTP_READ_TIMEOUT);
             urlConnection.setRequestMethod("GET");
             urlConnection.setDoInput(true);
             urlConnection.connect();
             int code = urlConnection.getResponseCode();
-            if (code != HttpsURLConnection.HTTP_OK) {
+            if (code != HttpURLConnection.HTTP_OK) {
                 Logger.d("response: %d", code);
                 return null;
             }
@@ -576,7 +579,7 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
     private byte[] downloadUrlMemory(String url) {
         Logger.d("download: %s", url);
 
-        HttpsURLConnection urlConnection = null;
+        HttpURLConnection urlConnection = null;
         try {
             urlConnection = setupHttpsRequest(url);
             if(urlConnection == null) {
@@ -611,7 +614,7 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
     private String downloadUrlMemoryAsString(String url) {
         Logger.d("download: %s", url);
 
-        HttpsURLConnection urlConnection = null;
+        HttpURLConnection urlConnection = null;
         try {
             urlConnection = setupHttpsRequest(url);
             if(urlConnection == null){
@@ -649,7 +652,7 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
             DeltaInfo.ProgressListener progressListener) {
         Logger.d("download: %s", url);
 
-        HttpsURLConnection urlConnection = null;
+        HttpURLConnection urlConnection = null;
         MessageDigest digest = null;
         if (matchMD5 != null) {
             try {
@@ -725,7 +728,7 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
             String matchMD5) {
         Logger.d("download: %s", url);
 
-        HttpsURLConnection urlConnection = null;
+        HttpURLConnection urlConnection = null;
         MessageDigest digest = null;
         long len = 0;
         if (matchMD5 != null) {
@@ -834,7 +837,7 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
     private long getUrlDownloadSize(String url) {
         Logger.d("getUrlDownloadSize: %s", url);
 
-        HttpsURLConnection urlConnection = null;
+        HttpURLConnection urlConnection = null;
         try {
             urlConnection = setupHttpsRequest(url);
             if(urlConnection == null){
@@ -856,11 +859,11 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
 
     private boolean isMatchingImage(String fileName) {
         try {
-            if(fileName.endsWith(".zip") && fileName.indexOf(config.getDevice()) != -1) {
+            if(fileName.startsWith(config.getFileBaseNamePrefix()) && fileName.endsWith(".zip")) {
                 String[] parts = fileName.split("-");
                 if (parts.length > 1) {
                     String version = parts[1];
-                    Version current = new Version(config.getAndroidVersion());
+                    Version current = new Version(config.getVersion());
                     Version fileVersion = new Version(version);
                     if (fileVersion.compareTo(current) >= 0) {
                         return true;
@@ -886,22 +889,20 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
         JSONObject object = null;
         try {
             object = new JSONObject(buildData);
-            Iterator<String> nextKey = object.keys();
             String latestBuild = null;
+            mBadObject = null;
             Date latestTimestamp = new Date(0);
-            while (nextKey.hasNext()) {
-                String key = nextKey.next();
-                if (key.equals("./" + config.getDevice())) {
-                    JSONArray builds = object.getJSONArray(key);
-                    for (int i = 0; i < builds.length(); i++) {
-                        JSONObject build = builds.getJSONObject(i);
-                        String fileName = new File(build.getString("filename")).getName();
-                        Date timestamp = new Date(build.getLong("timestamp"));
-                        // latest build can have a larger micro version then what we run now
-                        if (isMatchingImage(fileName) && timestamp.after(latestTimestamp)) {
-                            latestBuild = fileName;
-                            latestTimestamp = timestamp;
-                        }
+            mBadObject = object.optString("error");
+            if (mBadObject == null || mBadObject.isEmpty()) {
+                JSONArray builds = object.getJSONArray("updates");
+                for (int i = builds.length() - 1; i >= 0; i--) {
+                    JSONObject build = builds.getJSONObject(i);
+                    String fileName = build.getString("name");
+                    Date timestamp = new Date(build.getLong("build"));
+                    // latest build can have a larger micro version then what we run now
+                    if (isMatchingImage(fileName) && timestamp.after(latestTimestamp)) {
+                        latestBuild = fileName;
+                        latestTimestamp = timestamp;
                     }
                 }
             }
@@ -1127,12 +1128,6 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
         stopNotification();
         stopErrorNotification();
 
-        if (!isSupportedVersion()) {
-            // TODO - to be more generic this should maybe use the info from getNewestFullBuild
-            updateState(STATE_ERROR_UNOFFICIAL, null, null, null, config.getVersion(), null);
-            Logger.i("Ignoring request to check for updates - not compatible for update! " + config.getVersion());
-            return false;
-        }
         if (!networkState.isConnected()) {
             updateState(STATE_ERROR_CONNECTION, null, null, null, null, null);
             Logger.i("Ignoring request to check for updates - no data connection");
@@ -1736,17 +1731,13 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
         return ret;
     }
 
-    private boolean isSupportedVersion() {
-        return config.isOfficialVersion();
-    }
-
     private int getAutoDownloadValue() {
         String autoDownload = prefs.getString(SettingsActivity.PREF_AUTO_DOWNLOAD, getDefaultAutoDownloadValue());
         return Integer.valueOf(autoDownload).intValue();
     }
 
     private String getDefaultAutoDownloadValue() {
-        return isSupportedVersion() ? PREF_AUTO_DOWNLOAD_CHECK_STRING : PREF_AUTO_DOWNLOAD_DISABLED_STRING;
+        return PREF_AUTO_DOWNLOAD_CHECK_STRING;
     }
 
     private boolean isScreenStateEnabled() {
@@ -1835,13 +1826,15 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
         wakeLock.acquire();
         wifiLock.acquire();
 
-        String notificationText = getString(R.string.state_action_checking);
+        String notificationTitle = getString(R.string.notify_title_checking);
+        String notificationText = getString(R.string.notify_title_checking_sub);
         if (checkOnly > PREF_AUTO_DOWNLOAD_CHECK) {
-            notificationText = getString(R.string.state_action_downloading);
+            notificationTitle = getString(R.string.notify_title_downloading);
+            notificationText = getString(R.string.notify_title_downloading_sub);
         }
         Notification notification = (new Notification.Builder(this)).
                 setSmallIcon(R.drawable.stat_notify_update).
-                setContentTitle(getString(R.string.title)).
+                setContentTitle(notificationTitle).
                 setContentText(notificationText).
                 setShowWhen(false).
                 setContentIntent(getNotificationIntent(false)).
@@ -1871,7 +1864,7 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
                     // if we dont even find a build on dl no sense to continue
                     if (latestFullBuild == null) {
                         Logger.d("no latest build found at " + config.getUrlBaseJson() +
-                                " for " + config.getDevice() + " prefix " + config.getFileBaseNamePrefix());
+                                " for " + config.getDevice() + " with filename prefix " + config.getFileBaseNamePrefix());
                         return;
                     }
 

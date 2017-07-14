@@ -30,8 +30,7 @@
 		<activity
 			android:name="org.aoscp.cota.MainActivity"
 			android:label="@string/title"
-			android:launchMode="singleInstance"
-			android:theme="@style/Theme.OpenDelta" >
+			android:theme="@style/SystemTheme" >
 			<intent-filter android:priority="2147483647" >
 				<!--
 				Show up under Settings, About Device, System Updates.
@@ -39,9 +38,9 @@
 				APK needs to be in priv-app for this to work!
 				-->
 				<action android:name="android.settings.SYSTEM_UPDATE_SETTINGS" />
-				<!-- Show in launcher for debugging purposed -->
+				<!-- Show in launcher for debugging purposed
 				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
+				<category android:name="android.intent.category.LAUNCHER" />-->
 			</intent-filter>
 		</activity>
 		<activity
@@ -56,7 +55,11 @@
 		<activity
 			android:name="org.aoscp.cota.SettingsActivity"
 			android:label="@string/menu_settings"
-			android:theme="@style/Theme.OpenDelta.Settings" >
+			android:theme="@style/Theme.OpenDelta.Settings">
+			<intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
 		</activity>
 		<receiver android:name="org.aoscp.cota.BootCompleteReceiver" >
 			<intent-filter>

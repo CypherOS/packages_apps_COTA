@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="app_name">COTA</string>
+	<string name="app_name">CypherOS System Updates</string>
 	<string name="title">System updates</string>
 	<string name="action_networks">Networks</string>
 	<string name="title_networks">Auto download networks</string>
@@ -50,12 +50,6 @@
 	<string name="secure_mode_enabled_description"><![CDATA[The update\'s cryptographic signature will be verified before flashing to confirm its origin, and no additional updates will be flashed. This mode is only compatible with <b>TWRP</b>.]]></string>
 	<string name="secure_mode_disabled_title">Secure mode: disabled</string>
 	<string name="secure_mode_disabled_description"><![CDATA[Additional updates are flashed if present. Note that any (malicious) software package can place these updates and gain full system access. Caution is advised.]]></string>
-	<string name="recovery_notice_title">Notice</string>
-	<string name="recovery_notice_description_secure"><![CDATA[Flashing updates in the current mode is only supported on <b>TWRP</b> recoveries. Please make sure you are running a compatible recovery before continuing.]]></string>
-	<string name="recovery_notice_description_not_secure"><![CDATA[Flashing updates in the current mode is only officially supported on <b>TWRP</b> recoveries. <i>Official</i> <b>CWM</b> builds are <i>not</i> supported, though some <i>community-built</i> versions of <b>CWM</b> <i>may</i> still work. Please make sure you are running a compatible recovery before continuing.]]></string>
-	<string name="flash_after_update_notice_title">Notice</string>
-	<string name="flash_after_update_notice_description"><![CDATA[Additional updates are present in the <b>FlashAfterUpdate</b> folder, but secure mode is enabled. If you continue, these additional updates will <b>not</b> be flashed.]]></string>
-	<string name="state_error_not_official_title">Update disabled.</string>
 	<string name="state_error_not_official_extra" formatted="false">Update of %s not possible</string>
 	<string name="button_build_delta">Download</string>
 	<string name="button_stop">Stop</string>
@@ -82,9 +76,6 @@
 	<string name="twenty_five_percent">25</string>
 	<string name="fifty_percent">50;</string>
 	<string name="seventy_five_percent">75</string>
-	<string name="notify_title_error">Problem checking for update</string>
-	<string name="notify_title_flash">Update ready to flash</string>
-	<string name="notify_title_download">Update ready to download</string>
 	<string name="last_checked_never_title_new">Press \'Check\' to start</string>
 	<string name="screen_state_title">Screen off</string>
 	<string name="screen_state_message">Download only when screen is off</string>
@@ -106,4 +97,46 @@
 	<string name="clean_files_feedback" formatted="false">Deleted %d files. Now press \'Check for updates\'</string>
 	<string name="state_error_permissions">No storage permissions.</string>
 	<string name="state_error_flash">Failed to setup flash. Clean /cache and retry.</string>
+	
+	<!-- Header -->
+	<string name="header_update_unavailable">Your system is up to date</string>
+	<string name="header_update_available">System update available</string>
+	<string name="header_update_downloading">System update downloading...</string>
+	<string name="header_update_failed">Update failed to download</string>
+	<string name="header_update_install">Install system update</string>
+	
+	<!-- Update Message -->
+        <string name="update_message_unavailable">Last checked for update at %1$s</string>
+	<string name="update_message_available">This update will install a release version of CypherOS</string>
+	<string name="update_message_downloading">Tap the button below to cancel the download</string>
+	<string name="update_message_failed">Update failed.\nTap on the button below to check for updates again.</string>
+	<string name="update_message_install">Update successfully downloaded.\n Tap on the button below to install.</string>
+	
+	<!-- Update Size -->
+	<string name="update_size">Update size: %1$s</string>
+	<string name="update_size_unknown">Unknown</string>
+	
+	<!-- Action Button -->
+	<string name="update_action_cancel">Cancel</string>
+	<string name="update_action_check">Check</string>
+	<string name="update_action_download">Download</string>
+	<string name="update_action_install">Install</string>
+	
+	<!-- Notifications -->
+	<string name="notify_title_checking">Checking for updates &#8230;</string>
+	<string name="notify_title_checking_sub">Tap to manually check</string>
+	<string name="notify_title_error">Problem checking for update</string>
+	<string name="notify_title_download">System update available</string>
+	<string name="notify_title_downloading">Downloading system update</string>
+	<string name="notify_title_downloading_sub">Tap to view progress</string>
+	<string name="notify_title_flash">System update downloaded</string>
+	
+	<!-- Dialogs -->
+	<!-- Install Notice -->
+	<string name="install_notice_title">Preparing update</string>
+	<string name="install_notice_description"><![CDATA[Your device will reboot and apply the update package. Please backup your data as it may be wiped during the update process.\n\n<b>Secure mode is disabled. Please be aware of any malicious packages being applied during the install process.</b>]]></string>
+	<string name="install_notice_description_secure"><![CDATA[Your device will reboot and apply the update package. Please backup your data as it may be wiped during the update process.\n\n<b>Secure mode is enabled. The update package will be verified for additional security measures.</b>]]></string>
+	<!-- Flash After Update Notice -->
+	<string name="flash_after_update_notice_title">Notice</string>
+	<string name="flash_after_update_notice_description"><![CDATA[Additional updates are present in the <b>FlashAfterUpdate</b> folder, but secure mode is enabled. If you continue, these additional updates will <b>not</b> be flashed.]]></string>
 </resources>
