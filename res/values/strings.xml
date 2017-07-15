@@ -7,6 +7,9 @@
 
     <!-- Header -->
     <string name="header_update_unavailable">Your system is up to date</string>
+    <string name="header_update_checking">Checking for updates &#8230;</string>
+    <string name="header_update_searching">Searching for updates &#8230;</string>
+    <string name="header_update_verifying">Verifying file &#8230;</string>
     <string name="header_update_available">System update available</string>
     <string name="header_update_downloading">System update downloading...</string>
     <string name="header_update_install">Install system update</string>
