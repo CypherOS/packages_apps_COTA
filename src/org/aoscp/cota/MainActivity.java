@@ -195,6 +195,15 @@ public class MainActivity extends Activity {
                 mButton.setOnClickListener(mButtonCheckListener);
                 mProgressBar.setIndeterminate(false);
                 mSize.setVisibility(View.GONE);
+			} else if (UpdateService.STATE_ACTION_CHECKING.equals(state)) {
+                mHeader.setText(R.string.header_update_checking);
+                mMessage.setText(String.format(
+                            getResources().getString(R.string.update_message_unavailable, lastChecked)));
+                mButton.setText(R.string.update_action_check);
+                mButton.setOnClickListener(mButtonCheckListener);
+				mButton.setEnabled(false);
+                mProgressBar.setIndeterminate(false);
+                mSize.setVisibility(View.GONE);
             } else if (UpdateService.STATE_ACTION_READY.equals(state)) {
                 mHeader.setText(R.string.header_update_install);
                 mMessage.setText(R.string.update_message_install);
@@ -203,10 +212,10 @@ public class MainActivity extends Activity {
                 mProgressBar.setIndeterminate(false);
                 mSize.setVisibility(View.GONE);
             } else if (UpdateService.STATE_ACTION_BUILD.equals(state)) {
-                mHeader.setText(R.string.header_update_unavailable);
+                mHeader.setText(R.string.header_update_available);
                 mMessage.setText(String.format(
-                            getResources().getString(R.string.update_message_unavailable, lastChecked)));
-                mButton.setText(R.string.update_action_check);
+                            getResources().getString(R.string.update_message_available, lastChecked)));
+                mButton.setText(R.string.update_action_download);
                 mProgressBar.setIndeterminate(false);
                 mSize.setVisibility(View.GONE);
 
@@ -248,11 +257,35 @@ public class MainActivity extends Activity {
                 } else {
                     downloadSizeText = Formatter.formatFileSize(context, mSize);
                 }
-            } else if (UpdateService.STATE_ACTION_SEARCHING.equals(state)
-                    || UpdateService.STATE_ACTION_CHECKING.equals(state)) {
+			} else if (UpdateService.STATE_ACTION_SEARCHING.equals(state)) {
+				enableProgress = true;
+                mHeader.setText(R.string.header_update_searching);
+                mButton.setText(R.string.update_action_check);
+                mButton.setEnabled(false);
+                mProgressBar.setIndeterminate(true);
+				current = 1;
+                mSize.setVisibility(View.GONE);
+			} else if (UpdateService.STATE_ACTION_SEARCHING_MD5.equals(state)) {
+				enableProgress = true;
+                mHeader.setText(R.string.header_update_verifying);
+                mButton.setText(R.string.update_action_check);
+                mButton.setEnabled(false);
+                mProgressBar.setIndeterminate(false);
+                mSize.setVisibility(View.GONE);
+            } else if (UpdateService.STATE_ACTION_CHECKING.equals(state)) {
                 enableProgress = true;
+				mHeader.setText(R.string.header_update_checking);
+				mButton.setText(R.string.update_action_check);
+				mButton.setEnabled(false);
                 mProgressBar.setIndeterminate(true);
                 current = 1;
+                mSize.setVisibility(View.GONE);
+			} else if (UpdateService.STATE_ACTION_CHECKING_MD5.equals(state)) {
+				enableProgress = true;
+                mHeader.setText(R.string.header_update_verifying);
+                mButton.setText(R.string.update_action_check);
+                mButton.setEnabled(false);
+                mProgressBar.setIndeterminate(false);
                 mSize.setVisibility(View.GONE);
             } else {
                 enableProgress = true;
