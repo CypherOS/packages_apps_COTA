@@ -44,7 +44,7 @@
 	<item name="secure_mode_enable" type="bool">true</item>
 
 	<!-- (TWRP) Requires 'secure_mode_enable'. Decides whether the default setting for secure mode is enabled (true) or disabled (false) -->
-	<item name="secure_mode_default" type="bool">true</item>
+	<item name="secure_mode_default" type="bool">false</item>
 
 	<!--
     	Devices (detected using property_device) which may crash while downloading/patching/verifying when the screen is off.
