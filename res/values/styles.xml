@@ -22,4 +22,42 @@
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
+    <style name="SuwGlifIcon">
+        <item name="android:layout_marginLeft">@dimen/suw_glif_margin_sides</item>
+        <item name="android:layout_marginRight">@dimen/suw_glif_margin_sides</item>
+        <item name="android:layout_marginTop">@dimen/suw_glif_margin_top</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+
+    <style name="SuwBaseHeaderTitle">
+        <item name="android:layout_gravity">top</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:textSize">@dimen/suw_header_title_size</item>
+    </style>
+
+    <style name="SuwGlifHeaderTitle" parent="SuwBaseHeaderTitle">
+        <item name="android:layout_marginBottom">@dimen/suw_glif_header_title_margin_bottom</item>
+        <item name="android:layout_marginLeft">@dimen/suw_glif_margin_sides</item>
+        <item name="android:layout_marginRight">@dimen/suw_glif_margin_sides</item>
+        <item name="android:layout_marginTop">@dimen/suw_glif_header_title_margin_top</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="TextAppearance.SuwDescription" parent="@style/TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">@dimen/suw_description_text_size</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+    </style>
+
+    <style name="SuwGlifDescription">
+        <item name="android:layout_gravity">top</item>
+        <item name="android:layout_marginBottom">@dimen/suw_description_margin_bottom</item>
+        <item name="android:layout_marginLeft">@dimen/suw_glif_margin_sides</item>
+        <item name="android:layout_marginRight">@dimen/suw_glif_margin_sides</item>
+        <item name="android:layout_marginTop">@dimen/suw_description_glif_margin_top</item>
+        <item name="android:lineSpacingExtra">@dimen/suw_description_line_spacing_extra</item>
+        <item name="android:textAppearance">@style/TextAppearance.SuwDescription</item>
+    </style>
+
 </resources>
