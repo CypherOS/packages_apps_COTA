@@ -54,4 +54,7 @@
 	<string-array name="keep_screen_on_devices">
 	     <item></item>
 	</string-array>
+
+    <!-- The duration (in milliseconds) of activity transitions -->
+    <integer name="suwTransitionDuration">300</integer>
 </resources>
