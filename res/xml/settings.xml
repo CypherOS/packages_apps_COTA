@@ -20,20 +20,25 @@
 	<PreferenceCategory
 		android:key="category_flashing"
 		android:title="@string/category_flashing" >
+
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="secure_mode"
 			android:persistent="false"
 			android:title="@string/secure_mode_title" />
+
 	</PreferenceCategory>
+
 	<PreferenceCategory
 		android:key="category_scheduler"
 		android:title="@string/category_scheduler" >
+
 		<ListPreference
 			android:entries="@array/scheduler_actions_keys"
 			android:entryValues="@array/scheduler_actions_values"
 			android:key="auto_download_actions"
 			android:title="@string/auto_download_title" />
+
 		<ListPreference
 			android:defaultValue="0"
 			android:entries="@array/scheduler_mode_keys"
@@ -51,10 +56,13 @@
 			android:entryValues="@array/week_start_values"
 			android:key="scheduler_week_day"
 			android:title="@string/scheduler_week_day" />
+
 	</PreferenceCategory>
+
 	<PreferenceCategory
 		android:key="category_download"
 		android:title="@string/category_download" >
+
 		<Preference
 			android:key="networks_config"
 			android:persistent="false"
@@ -66,6 +74,7 @@
 			android:key="screen_state_off"
 			android:summary="@string/screen_state_message"
 			android:title="@string/screen_state_title" />
+
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="charge_only"
@@ -78,15 +87,19 @@
 			android:entryValues="@array/battery_level_values"
 			android:key="battery_level_string"
 			android:title="@string/battery_level_title" />
+
 	</PreferenceCategory>
+
 	<PreferenceCategory
 		android:key="category_admin"
 		android:title="@string/category_admin" >
+
 		<Preference
 			android:key="clear_files"
 			android:persistent="false"
 			android:summary="@string/clear_files_summary"
 			android:title="@string/clear_files_title" />
+
 	</PreferenceCategory>
 
 </PreferenceScreen>
