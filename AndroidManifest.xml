@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="org.aoscp.cota"
-	android:versionCode="10"
-	android:versionName="1.0" >
+	package="org.aoscp.cota" >
 	<uses-sdk
 		android:minSdkVersion="23"
 		android:targetSdkVersion="25" />
@@ -22,7 +20,7 @@
 	<application
 		android:name="org.aoscp.cota.Application"
 		android:allowBackup="false"
-		android:icon="@mipmap/ic_launcher_settings"
+		android:icon="@mipmap/ic_launcher"
 		android:label="@string/app_name" >
 
         <uses-library android:name="org.apache.http.legacy" android:required="false" />
@@ -30,7 +28,7 @@
 		<activity
 			android:name="org.aoscp.cota.MainActivity"
 			android:label="@string/title"
-			android:theme="@style/SystemTheme" >
+			android:theme="@style/Theme.Glif" >
 			<intent-filter android:priority="2147483647" >
 				<!--
 				Show up under Settings, About Device, System Updates.
@@ -55,7 +53,7 @@
 		<activity
 			android:name="org.aoscp.cota.SettingsActivity"
 			android:label="@string/menu_settings"
-			android:theme="@style/Theme.OpenDelta.Settings">
+			android:theme="@style/SettingsTheme">
 			<intent-filter>
                 <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
                 <category android:name="android.intent.category.DEFAULT" />
