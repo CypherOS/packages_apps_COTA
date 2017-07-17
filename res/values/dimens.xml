@@ -1,27 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (C) 2017 CypherOS
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
 <resources>
 
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">10dp</dimen>
-
     <!-- General layout -->
-    <dimen name="margin_top">50dp</dimen>
-    <dimen name="margin_sides">24dp</dimen>
+    <dimen name="suw_glif_margin_top">48dp</dimen>
+    <dimen name="suw_glif_margin_sides">24dp</dimen>
 
-    <!-- Header Image -->
-    <dimen name="header_icon_size">32dp</dimen>
+    <!-- Header title -->
+    <dimen name="suw_glif_header_title_margin_top">15dp</dimen>
+    <dimen name="suw_glif_header_title_margin_bottom">2dp</dimen>
+    <dimen name="suw_header_title_size">24sp</dimen>
 
-    <!-- Header -->
-    <dimen name="header_title_size">24sp</dimen>
-    <dimen name="header_title_margin_top">15dp</dimen>
-    <dimen name="header_title_margin_bottom">2dp</dimen>
-
-    <!-- Message -->
-    <dimen name="message_text_size">16sp</dimen>
-    <dimen name="message_margin_top">12dp</dimen>
-    <dimen name="message_margin_left">18dp</dimen>
-    <dimen name="message_margin_right">18dp</dimen>
-    <dimen name="message_margin_bottom">20dp</dimen>
-    <dimen name="message_line_spacing">3dp</dimen>
+    <!-- Description -->
+    <dimen name="suw_description_glif_margin_top">3dp</dimen>
+    <dimen name="suw_description_margin_bottom">12dp</dimen>
+    <dimen name="suw_description_line_spacing_extra">4sp</dimen>
+    <dimen name="suw_description_text_size">16sp</dimen>
 
 </resources>
