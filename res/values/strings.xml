@@ -106,7 +106,7 @@
 	<string name="header_update_install">Install system update</string>
 	
 	<!-- Update Message -->
-        <string name="update_message_unavailable">Last checked for update at %1$s</string>
+    <string name="update_message_unavailable">Last checked for update at %1$s</string>
 	<string name="update_message_available">This update will install a release version of CypherOS</string>
 	<string name="update_message_downloading">Tap the button below to cancel the download</string>
 	<string name="update_message_failed">Update failed.\nTap on the button below to check for updates again.</string>
