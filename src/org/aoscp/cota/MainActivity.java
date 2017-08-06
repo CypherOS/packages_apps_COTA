@@ -254,13 +254,6 @@ public class MainActivity extends Activity {
             } else if (UpdateService.STATE_ERROR_UNKNOWN.equals(state)) {
                 enableCheck = true;
                 progress.setIndeterminate(false);
-            } else if (UpdateService.STATE_ERROR_UNOFFICIAL.equals(state)) {
-                enableCheck = true;
-                progress.setIndeterminate(false);
-                title = getString(R.string.state_error_not_official_title);
-                extraText = getString(R.string.state_error_not_official_extra,
-                        intent.getStringExtra(UpdateService.EXTRA_FILENAME));
-                DrawableCompat.setTint(mOmniLogo.getDrawable(), ContextCompat.getColor(context, R.color.logo_disabled));
             } else if (UpdateService.STATE_ERROR_DOWNLOAD.equals(state)) {
                 enableCheck = true;
                 progress.setIndeterminate(false);
