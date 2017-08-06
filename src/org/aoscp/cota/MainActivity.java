@@ -128,11 +128,14 @@ public class MainActivity extends Activity {
                 // use a special title then - but only once
                 if (UpdateService.STATE_ACTION_NONE.equals(state)
                         && !prefs.getBoolean(SettingsActivity.PREF_START_HINT_SHOWN, false)) {
+					enableProgress = false;
                     mHeader.setText(R.string.header_update_unavailable);
                     mMessage.setText(String.format(
                             getResources().getString(R.string.update_message_unavailable, lastChecked)));
                     mButton.setText(R.string.update_action_check);
                     mButton.setOnClickListener(mButtonCheckListener);
+					mProgressBar.setIndeterminate(false);
+                    mSize.setVisibility(View.GONE);
                 }
                 // dont spill for progress
                 if (!UpdateService.isProgressState(state)) {
@@ -188,6 +191,7 @@ public class MainActivity extends Activity {
                 mProgressBar.setIndeterminate(false);
                 mSize.setVisibility(View.VISIBLE);
             } else if (UpdateService.STATE_ACTION_NONE.equals(state)) {
+				enableProgress = false;
                 mHeader.setText(R.string.header_update_unavailable);
                 mMessage.setText(String.format(
                             getResources().getString(R.string.update_message_unavailable, lastChecked)));
@@ -251,6 +255,11 @@ public class MainActivity extends Activity {
             } else if (UpdateService.STATE_ACTION_SEARCHING.equals(state)
                     || UpdateService.STATE_ACTION_CHECKING.equals(state)) {
                 enableProgress = true;
+				mHeader.setText(R.string.header_update_checking);
+				mMessage.setText(String.format(
+                            getResources().getString(R.string.update_message_unavailable, lastChecked)));
+                mButton.setText(R.string.update_action_check);
+                mButton.setOnClickListener(mButtonCheckListener);
                 mProgressBar.setIndeterminate(true);
                 current = 1;
                 mSize.setVisibility(View.GONE);
