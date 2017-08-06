@@ -66,6 +66,10 @@ public class Config {
     private final boolean keep_screen_on;
     private final String filename_base_prefix;
     private final String url_base_json;
+    private final String official_version_tag;
+    private final String android_version;
+    private final String weekly_version_tag;
+    private final String security_version_tag;
 
     /*
      * Using reflection voodoo instead calling the hidden class directly, to
@@ -96,7 +100,7 @@ public class Config {
         property_device = getProperty(context,
                 res.getString(R.string.property_device), "");
         filename_base = String.format(Locale.ENGLISH,
-                res.getString(R.string.filename_base), property_device, property_version);
+                res.getString(R.string.filename_base), property_version);
 
         path_base = String.format(Locale.ENGLISH, "%s%s%s%s", Environment
                 .getExternalStorageDirectory().getAbsolutePath(),
@@ -116,9 +120,14 @@ public class Config {
         inject_signature_keys = res.getString(R.string.inject_signature_keys);
         secure_mode_enable = res.getBoolean(R.bool.secure_mode_enable);
         secure_mode_default = res.getBoolean(R.bool.secure_mode_default);
-        url_base_json = String.format(Locale.ENGLISH, res.getString(R.string.url_base_json), property_device);
+        url_base_json = res.getString(R.string.url_base_json);
+        official_version_tag = res.getString(R.string.official_version_tag);
+        weekly_version_tag = res.getString(R.string.weekly_version_tag);
+        security_version_tag = res.getString(R.string.security_version_tag);
+        android_version = getProperty(context,
+                res.getString(R.string.android_version), "");
         filename_base_prefix = String.format(Locale.ENGLISH,
-                res.getString(R.string.filename_base_prefix), property_device);
+                res.getString(R.string.filename_base), android_version);
         boolean keep_screen_on = false;
         try {
             String[] devices = res
@@ -274,5 +283,15 @@ public class Config {
 
     public String getUrlBaseJson() {
         return url_base_json;
+    }
+
+    public boolean isOfficialVersion() {
+        return getVersion().indexOf(official_version_tag) != -1 ||
+                getVersion().indexOf(weekly_version_tag) != -1 ||
+                getVersion().indexOf(security_version_tag) != -1;
+    }
+
+    public String getAndroidVersion() {
+        return android_version;
     }
 }

@@ -23,7 +23,7 @@
 #include "zipadjust.h"
 #include "delta.h"
 
-JNIEXPORT jint JNICALL Java_org_aoscp_cota_Native_zipadjust(JNIEnv * env, jobject clazz, jstring jFilenameIn, jstring jFilenameOut, jint decompress) {
+JNIEXPORT jint JNICALL Java_eu_chainfire_opendelta_Native_zipadjust(JNIEnv * env, jobject clazz, jstring jFilenameIn, jstring jFilenameOut, jint decompress) {
 	const char* filenameIn = (*env)->GetStringUTFChars(env, jFilenameIn, 0);
 	const char* filenameOut = (*env)->GetStringUTFChars(env, jFilenameOut, 0);
 
@@ -35,7 +35,7 @@ JNIEXPORT jint JNICALL Java_org_aoscp_cota_Native_zipadjust(JNIEnv * env, jobjec
 	return ret;
 }
 
-JNIEXPORT jint JNICALL Java_org_aoscp_cota_Native_dedelta(JNIEnv * env, jobject clazz, jstring jFilenameSource, jstring jFilenameDelta, jstring jFilenameOut) {
+JNIEXPORT jint JNICALL Java_eu_chainfire_opendelta_Native_dedelta(JNIEnv * env, jobject clazz, jstring jFilenameSource, jstring jFilenameDelta, jstring jFilenameOut) {
 	const char* filenameSource = (*env)->GetStringUTFChars(env, jFilenameSource, 0);
 	const char* filenameDelta = (*env)->GetStringUTFChars(env, jFilenameDelta, 0);
 	const char* filenameOut = (*env)->GetStringUTFChars(env, jFilenameOut, 0);

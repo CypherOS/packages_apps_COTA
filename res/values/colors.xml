@@ -15,12 +15,4 @@
     <color name="view_background">@color/material_grey_100</color>
     <color name="window_background">@color/material_grey_300</color>
     <color name="text_color">@android:color/black</color>
-
-    <color name="colorPrimary">#ff4285f4</color>
-    <color name="colorTitle">#000000</color>
-    <color name="textColor">#1E1E1E</color>
-    <color name="messageTextColor">#1E1E1E</color>
-    <color name="highlightsTextColor">#303030</color>
-
-    <color name="notification_icon_color">@android:color/white</color>
 </resources>
