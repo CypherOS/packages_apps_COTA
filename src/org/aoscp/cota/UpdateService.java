@@ -144,7 +144,6 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
     public static final String STATE_ACTION_READY = "action_ready";
     public static final String STATE_ERROR_DISK_SPACE = "error_disk_space";
     public static final String STATE_ERROR_UNKNOWN = "error_unknown";
-    public static final String STATE_ERROR_UNOFFICIAL = "error_unofficial";
     public static final String STATE_ACTION_BUILD = "action_build";
     public static final String STATE_ERROR_DOWNLOAD = "error_download";
     public static final String STATE_ERROR_CONNECTION = "error_connection";
@@ -912,7 +911,7 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
         } catch (Exception e) {
             Logger.ex(e);
         }
-        updateState(STATE_ERROR_UNOFFICIAL, null, null, null, config.getVersion(), null);
+        updateState(STATE_ACTION_NONE, null, null, null, config.getVersion(), null);
         return null;
     }
 
@@ -1772,7 +1771,6 @@ OnWantUpdateCheckListener, OnSharedPreferenceChangeListener {
         if (state.equals(UpdateService.STATE_ERROR_DOWNLOAD) ||
                 state.equals(UpdateService.STATE_ERROR_DISK_SPACE) ||
                 state.equals(UpdateService.STATE_ERROR_UNKNOWN) ||
-                state.equals(UpdateService.STATE_ERROR_UNOFFICIAL) ||
                 state.equals(UpdateService.STATE_ERROR_CONNECTION)) {
             return true;
         }
