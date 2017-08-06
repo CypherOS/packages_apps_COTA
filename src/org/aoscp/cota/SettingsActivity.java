@@ -304,11 +304,7 @@ public class SettingsActivity extends PreferenceActivity implements
     }
 
     private String getDefaultAutoDownloadValue() {
-        return isSupportedVersion() ? UpdateService.PREF_AUTO_DOWNLOAD_CHECK_STRING : UpdateService.PREF_AUTO_DOWNLOAD_DISABLED_STRING;
-    }
-
-    private boolean isSupportedVersion() {
-        return mConfig.isOfficialVersion();
+        return UpdateService.PREF_AUTO_DOWNLOAD_CHECK_STRING;
     }
 
     private int cleanFiles() {
