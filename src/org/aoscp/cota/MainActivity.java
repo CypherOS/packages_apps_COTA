@@ -133,6 +133,8 @@ public class MainActivity extends Activity {
                             getResources().getString(R.string.update_message_unavailable, lastChecked)));
                     mButton.setText(R.string.update_action_check);
                     mButton.setOnClickListener(mButtonCheckListener);
+					mProgressBar.setIndeterminate(false);
+                    mSize.setVisibility(View.GONE);
                 }
                 // dont spill for progress
                 if (!UpdateService.isProgressState(state)) {
@@ -339,8 +341,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+		registerReceiver(updateReceiver, updateFilter);
         overridePendingTransition(R.anim.slide_next_in, R.anim.slide_next_out);
-        UpdateService.startUpdate(this);
     }
 
     private final Button.OnClickListener mButtonCheckListener = new Button.OnClickListener() {
