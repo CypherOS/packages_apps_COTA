@@ -11,7 +11,10 @@
 	<string name="property_device">ro.aoscp.device</string>
 
 	<!-- %s is expanded to property_version value. .zip, .delta, .update, .sign extensions added when needed -->
-	<string name="filename_base">aoscp_%s</string>
+	<string name="filename_base">aoscp_%1$s-%2$s</string>
+ 
+ 	<!-- %s is expanded to property_version value. .zip, .delta, .update, .sign extensions added when needed -->
+ 	<string name="filename_base_prefix">aoscp_%s</string>
 
 	<!-- Path deltas are stored, relative to sdcard root -->
 	<string name="path_base">PatchUpdate</string>
@@ -23,10 +26,10 @@
 	<string name="url_base_update">http://get.cypheros.co/deltas/%s/</string>
 
 	<!-- URL base to find the full zip files, %s is expanded to property_device value. Path is suffixed by (expanded) filename_base -->
-	<string name="url_base_full">http://get.cypheros.co/updates/%s/</string>
+	<string name="url_base_full">http://dl.cypheros.co/%s/</string>
 
 	<!-- URL base to fetch all builds -->
-	<string name="url_base_json">http://get.cypheros.co/updates/getter.php?d=%s</string>
+	<string name="url_base_json">http://get.cypheros.co/updates/%s</string>
 
 	<!-- Applies whole-file signature delta. Adds one extra delta step. Required if recovery verifies signatures -->
 	<item name="apply_signature" type="bool">true</item>
@@ -51,10 +54,4 @@
 	<string-array name="keep_screen_on_devices">
 		<item></item>
 	</string-array>
-
-	<string name="official_version_tag">official</string>
-	<string name="weekly_version_tag">WEEKLY</string>
-	<string name="security_version_tag">SECURITY_RELEASE</string>
-
-	<string name="android_version">ro.build.version.release</string>
 </resources>
