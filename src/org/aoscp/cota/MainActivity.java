@@ -327,7 +327,7 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
         registerReceiver(updateReceiver, updateFilter);
-        overridePendingTransition(R.anim.slide_next_in, R.anim.slide_next_out);
+        overridePendingTransition(R.anim.suw_slide_next_in, R.anim.suw_slide_next_out);
     }
 
     @Override
@@ -339,7 +339,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        overridePendingTransition(R.anim.slide_next_in, R.anim.slide_next_out);
+        overridePendingTransition(R.anim.suw_slide_next_in, R.anim.suw_slide_next_out);
         UpdateService.startUpdate(this);
     }
 
