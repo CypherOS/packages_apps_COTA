@@ -12,6 +12,7 @@ LOCAL_STATIC_JAVA_LIBRARIES := \
     android-support-v4 \
     android-support-design \
     android-support-v7-appcompat \
+	android-support-v7-recyclerview \
     volley
 
 LOCAL_SRC_FILES += $(call all-java-files-under, src)
@@ -24,6 +25,8 @@ LOCAL_AAPT_FLAGS := --auto-add-overlay \
     --extra-packages android.support.v4 \
     --extra-packages android.support.v7.appcompat \
     --extra-packages android.support.design
+	
+include frameworks/base/packages/SettingsLib/common.mk
 
 include $(BUILD_PACKAGE)
 
