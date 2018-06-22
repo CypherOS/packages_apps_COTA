@@ -19,9 +19,9 @@ public class DeviceInfoUtils {
         return new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date(System
                 .currentTimeMillis()));
     }
-	
+
     public static String getRealTime() {
-        return new SimpleDateFormat("HH:mm aa", Locale.getDefault()).format(Calendar.getInstance().getTime());
+        return new SimpleDateFormat("h:mm a", Locale.getDefault()).format(Calendar.getInstance().getTime());
     }
 
     public static String getDevice() {
