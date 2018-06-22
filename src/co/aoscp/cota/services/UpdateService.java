@@ -15,7 +15,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 
 import co.aoscp.cota.R;
-import co.aoscp.cota.activities.SystemActivity;
+import co.aoscp.cota.UpdateSystem;
 import co.aoscp.cota.updater.Updater;
 import co.aoscp.cota.utils.AlarmUtils;
 
@@ -82,7 +82,7 @@ public class UpdateService extends Service {
             infosRom = sPackageInfosRom;
         }
 
-        Intent intent = new Intent(context, SystemActivity.class);
+        Intent intent = new Intent(context, UpdateSystem.class);
         NotificationInfo fileInfo = new NotificationInfo();
         fileInfo.mNotificationId = NOTIFICATION_UPDATE;
         fileInfo.mPackageInfosRom = infosRom;
@@ -109,7 +109,7 @@ public class UpdateService extends Service {
     public static void startNotificationInstall(Context context) {
         Resources resources = context.getResources();
 
-        Intent intent = new Intent(context, SystemActivity.class);
+        Intent intent = new Intent(context, UpdateSystem.class);
         NotificationInfo fileInfo = new NotificationInfo();
         fileInfo.mNotificationId = NOTIFICATION_INSTALL;
         intent.putExtra(FILES_INFO, fileInfo);
