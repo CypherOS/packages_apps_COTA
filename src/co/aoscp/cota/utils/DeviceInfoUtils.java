@@ -1,5 +1,7 @@
 package co.aoscp.cota.utils;
 
+import android.text.format.DateFormat;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -11,6 +13,7 @@ public class DeviceInfoUtils {
     private static final String MOD_VERSION = "ro.modversion";
     private static final String AOSCP_VERSION = "ro.aoscp.version";
     private static final String AOSCP_CODENAME = "ro.aoscp.codename";
+	private static final String AOSCP_MAINTENANCE_PATCH = "ro.aoscp.maintenance_patch";
     private static final String PROPERTY_DEVICE = "ro.aoscp.device";
     private static final String PROPERTY_DEVICE_EXT = "ro.product.device";
     private static final String PROPERTY_DEVICE_MODEL = "ro.product.model";
@@ -50,6 +53,18 @@ public class DeviceInfoUtils {
 
     public static String getCodeName() {
         return UpdateUtils.getProp(AOSCP_CODENAME);
+    }
+
+	public static String getMaintenancePatch() {
+        if (!"".equals(UpdateUtils.getProp(AOSCP_MAINTENANCE_PATCH))) {
+            try {
+                SimpleDateFormat template = new SimpleDateFormat("yyyy-MM-dd");
+                Date patchDate = template.parse(UpdateUtils.getProp(AOSCP_MAINTENANCE_PATCH));
+                String format = DateFormat.getBestDateTimePattern(Locale.getDefault(), "dMMMMyyyy");
+                UpdateUtils.getProp(AOSCP_MAINTENANCE_PATCH) = DateFormat.format(format, patchDate).toString();
+            } catch (ParseException e) {}
+            return UpdateUtils.getProp(AOSCP_MAINTENANCE_PATCH);
+        }
     }
 
     public static String getReadableDate(String fileDate) {

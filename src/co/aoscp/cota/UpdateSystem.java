@@ -233,6 +233,7 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
                     mPreDescription = String.format(getResources().getString(
                             R.string.update_system_brief_description_update_to_date), 
                             mDeviceUtils.getVersionDisplay(),
+							mDeviceUtils.getMaintenancePatch(),
                             mDeviceUtils.getRealTime());
                     mActionIcon.setImageResource(R.drawable.ic_action_check);
                     mPreAction = getResources().getString(R.string.update_system_action_check);
