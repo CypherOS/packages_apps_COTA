@@ -14,7 +14,7 @@ public class NotificationAlarm extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (mRomUpdater == null) {
-            mRomUpdater = new RomUpdater(context, true);
+            mRomUpdater = new RomUpdater(context, true, true);
         }
         if (NetworkUtils.isNetworkAvailable(context)) {
             mRomUpdater.check();
