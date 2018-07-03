@@ -1,30 +1,39 @@
 <resources>
     <!-- GENERAL -->
-    <string name="app_name">Atualização do sistema</string>
+    <string name="app_name">Atualizações do Sistema</string>
     <string name="update_label">CypherOS</string>
+    <string name="update_system_notification_channel">Alerta de atualizações do sistema</string>
 
     <!-- Up To Date -->
-    <string name="no_updates_title">Atualização do sistema</string>
-    <string name="no_updates_text">Seu dispositivo está atualizado!</string>
+    <string name="no_updates_title">Seu sistema está atualizado</string>
+    <string name="no_updates_text">Versão CypherOS: %1$s\nRelease: %2$s\n\nÚltima verificação às %3$s</string>
+    <string name="no_updates_check">Verificar</string>
 
     <!-- Update available -->
-    <string name="update_found_title">Nova atualização disponível</string>
-    <string name="update_found_text">Versão: %1$s está disponível\n\nEsta atualização fornece atualizações gerais de desempenho e manutenção para seu dispositivo. Você pode encontrar mais informações em http://cypheros.co/bulletin\nPara começar a atualização, toque no botão de download abaixo\n\nEsta atualização requer um reinício\nPacote de atualização: %2$s</string>
+    <string name="update_found_title">Atualização do sistema disponível</string>
+    <string name="update_found_text">Essa atualização irá instalar a nova versão CypherOS %1$s em seu %2$s. %3$s</string>
+    <string name="update_found_size">Tamanho da atualização: %1$s</string>
+    <string name="update_found_notif">Toque para saber mais e baixar</string>
+    <string name="update_found_download">Baixar</string>
 
     <!-- Update checking message -->
     <string name="update_checking">Verificando atualizações....</string>
-	
+
     <!-- Downloading update -->
-    <string name="downloading_title">Fazendo download da atualização…</string>
-    <string name="downloading_text">Fazendo o download… %1$s\nToque no botão abaixo para cancelar o download</string>
+    <string name="downloading_title">Baixando atualização do sistema...</string>
+    <string name="downloading_text">Toque o botão abaixo para cancelar</string>
+    <string name="downloaded_complete">Transferência concluída</string>
+    <string name="update_downloaded_notif">Toque para instalar a atualização</string>
+    <string name="downloading_cancel">Cancelar</string>
 
     <!-- Download failed -->
-    <string name="download_failed_title">Falha no download</string>
-    <string name="download_failed_text">A atualização falhou.\nToque no botão abaixo para verificar se há atualizações novamente.</string>
+    <string name="download_failed_title">Falha ao baixar atualização</string>
+    <string name="download_failed_text">Atualização falhou.\nToque o botão abaixo para verificar atualizações novamente.</string>
 
     <!-- Install -->
-    <string name="install_title">Instalar atualização</string>
-    <string name="install_text">Atualização baixada com sucesso.\n Toque no botão abaixo para instalar.</string>
+    <string name="install_title">Instalar atualização do sistema</string>
+    <string name="install_text">Atualização baixada com êxito.\nToque no botão abaixo para instalar.</string>
+    <string name="install_action">Instalar</string>
 
     <!-- MD5 -->
     <string name="calculating_md5">Calculando a soma MD5…</string>
@@ -32,18 +41,50 @@
     <string name="md5_install_anyway">Continuar</string>
 
     <!-- Reboot -->
-    <string name="alert_reboot_install_title">A atualização está pronta</string>
-    <string name="alert_reboot_one_message">O dispositivo reiniciará e aplicará o pacote de atualização. Faça backup de seus dados, pois ele pode ser apagado durante o processo de atualização.</string>
+    <string name="alert_reboot_install_title">Atualização está pronta</string>
+    <string name="alert_reboot_one_message">Seu dispositivo irá reiniciar e instalar a atualização. Por favor, faça backup de seus dados, pois podem ser perdidos durante o processo de atualização.</string>
     <string name="alert_reboot_now">Instalar</string>
 
     <!-- Errors -->
-    <string name="error_cannot_resume">Erro: O download não pôde ser retomado</string>
+    <string name="error_cannot_resume">Erro: Não foi possível retomar a transferência</string>
     <string name="error_device_not_found">Erro: Sdcard não montado</string>
-    <string name="error_file_already_exists">Erro: o arquivo já existe</string>
+    <string name="error_file_already_exists">Erro: Arquivo já existe</string>
     <string name="error_file_error">Erro: Erro de armazenamento</string>
-    <string name="error_http_data_error">Erro: Http erro</string>
-    <string name="error_insufficient_space">Erro: Não há espaço restante</string>
-    <string name="error_too_many_redirects">Erro: muitos redirecionamentos</string>
-    <string name="error_unhandled_http_code">Erro: código http não manipulado</string>
-    <string name="error_unknown">Erro: Desconhecido</string>
+    <string name="error_http_data_error">Erro: Erro de Http</string>
+    <string name="error_insufficient_space">Erro: Sem espaço suficiente no dispositivo</string>
+    <string name="error_too_many_redirects">Erro: Muitos redirecionamentos</string>
+    <string name="error_unhandled_http_code">Erro: Código http não manipulado</string>
+    <string name="error_unknown">Error: Desconhecido</string>
+
+    <!-- Up To Date -->
+    <string name="update_system_header_update_to_date">Seu sistema está atualizado</string>
+    <string name="update_system_brief_description_update_to_date"><![CDATA[Versão CypherOS: %1$s<br>Nível do patch de manutenção: %2$s<br><br>Última verificação às %3$s></string>
+    <string name="update_system_action_check"><![CDATA[<b>Verificar atualização</b>]]></string>
+
+    <!-- Update available -->
+    <string name="update_system_header_update_available">Atualização do sistema disponível</string>
+    <string name="update_system_brief_description_update_available">%1$s</string>
+    <string name="update_system_action_download"><![CDATA[<b>Baixar</b>]]></string>
+    <string name="update_system_update_size">Tamanho da atualização: %1$s</string>
+    <string name="update_system_notification_update_available">CypherOS %1$s</string>
+    <string name="update_system_notification_update_available_desc">Toque para saber mais e baixar</string>
+
+    <!-- Update checking message -->
+    <string name="update_system_header_update_checking">Verificando atualizações...</string>
+
+    <!-- Downloading update -->
+    <string name="update_system_header_update_downloading">Baixando atualização do sistema...</string>
+    <string name="update_system_brief_description_update_downloading">Toque o botão abaixo para cancelar</string>
+    <string name="update_system_action_cancel"><![CDATA[<b>Cancelar</b>]]></string>
+
+    <!-- Download failed -->
+    <string name="update_system_header_update_downloading_failed">Falha ao baixar atualização</string>
+    <string name="update_system_brief_description_update_downloading_failed">Atualização falhou.\nToque o botão abaixo para verificar atualizações novamente.</string>
+
+    <!-- Install -->
+    <string name="update_system_header_update_install">Instalar atualização do sistema</string>
+    <string name="update_system_brief_description_update_install">Atualização baixada com êxito.\nToque no botão abaixo para instalar.</string>
+    <string name="update_system_action_install"><![CDATA[<b>Instalar</b>]]></string>
+
+    <string name="update_system_learn_more">Saiba mais</string>
 </resources>
