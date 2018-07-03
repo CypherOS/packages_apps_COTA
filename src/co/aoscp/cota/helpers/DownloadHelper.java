@@ -31,6 +31,7 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import co.aoscp.cota.UpdateNotification;
 import co.aoscp.cota.R;
 import co.aoscp.cota.services.UpdateService;
 import co.aoscp.cota.utils.FileUtils;
@@ -46,6 +47,7 @@ public class DownloadHelper {
 
     private static DownloadManager sDownloadManager;
     private static DownloadCallback sCallback;
+	private static UpdateNotification mUpdateNotification;
 
     private static boolean sDownloadingRom = false;
     private static Runnable sUpdateProgress = new Runnable() {
@@ -98,6 +100,7 @@ public class DownloadHelper {
             sDownloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         }
         registerCallback(callback);
+		mUpdateNotification = new UpdateNotification(context);
         checkIfDownloading();
     }
 
@@ -236,6 +239,7 @@ public class DownloadHelper {
         sDownloadingRom = false;
         PreferenceUtils.setDownloadRomId(sContext, null, null, null);
         sUpdateHandler.removeCallbacks(sUpdateProgress);
+		mUpdateNotification.showInstall();
     }
 
     private static void cancelDownload(final long id) {

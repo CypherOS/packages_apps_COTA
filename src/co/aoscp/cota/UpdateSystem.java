@@ -88,6 +88,7 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
 
     private DeviceInfoUtils mDeviceUtils;
 
+	private UpdateNotification mUpdateNotification;
     private UpdateService.NotificationInfo mNotificationInfo;
       
     private Context mContext;
@@ -127,15 +128,16 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
 
         mUpdatePackage = null;
         DownloadHelper.init(this, this);
-        mRomUpdater = new RomUpdater(this, true);
+        mRomUpdater = new RomUpdater(this, true, false);
         mRebootHelper = new RebootHelper(new RecoveryHelper(UpdateSystem.this));
         mRomUpdater.addUpdaterListener(this);
+		mUpdateNotification = new UpdateNotification(this);
 
         if (mNotificationInfo != null) {
             if (mNotificationInfo.mNotificationId == UpdateService.NOTIFICATION_UPDATE) {
                 mRomUpdater.setLastUpdates(mNotificationInfo.mPackageInfosRom);
             } else {
-                mRomUpdater.check(true);
+				mRomUpdater.check(true);
             }
         } else if (DownloadHelper.isDownloading()) {
             mState = STATE_DOWNLOADING;
@@ -313,6 +315,7 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
                 case STATE_DOWNLOADING:
                     mState = STATE_CHECK;
                     DownloadHelper.clearDownloads();
+					mUpdateNotification.cancelNotifications();
                     updateMessages((PackageInfo) null);
                     break;
                 case STATE_ERROR:

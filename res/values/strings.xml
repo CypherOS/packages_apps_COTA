@@ -85,6 +85,8 @@
     <string name="update_system_header_update_install">Install system update</string>
     <string name="update_system_brief_description_update_install">Update successfully downloaded.\nTap on the button below to install.</string>
     <string name="update_system_action_install"><![CDATA[<b>Install</b>]]></string>
+	<string name="update_system_notification_install_update">Update is ready</string>
+    <string name="update_system_notification_install_update_desc">Tap to install</string>
 
     <string name="update_system_learn_more">Learn more</string>
 </resources>
