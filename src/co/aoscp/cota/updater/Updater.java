@@ -27,6 +27,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
+import co.aoscp.cota.UpdateNotification;
 import co.aoscp.cota.services.UpdateService;
 import co.aoscp.cota.utils.UpdateUtils;
 import co.aoscp.cota.utils.Version;
@@ -38,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Updater implements Response.Listener<JSONObject>, Response.ErrorListener {
+	
     private Context mContext;
     private Server[] mServers;
     private PackageInfo[] mLastUpdates = new PackageInfo[0];
@@ -48,12 +51,15 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
     private boolean mFromAlarm;
     private boolean mServerWorks = false;
     private int mCurrentServer = -1;
+	
+	private UpdateNotification mUpdateNotification;
 
     public Updater(Context context, Server[] servers, boolean fromAlarm) {
         mContext = context;
         mServers = servers;
         mFromAlarm = fromAlarm;
         mQueue = Volley.newRequestQueue(context);
+		mUpdateNotification = new UpdateNotification(context);
     }
 
     public abstract Version getVersion();
@@ -116,7 +122,7 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
             if (lastUpdates.length > 0) {
                 mServerWorks = true;
                 if (mFromAlarm) {
-                    UpdateService.showUpdateAvailableNotification(getContext(), lastUpdates);
+                    mUpdateNotification.showUpdate(getContext(), lastUpdates);
                 }
             } else {
                 if (error != null && !error.isEmpty()) {
