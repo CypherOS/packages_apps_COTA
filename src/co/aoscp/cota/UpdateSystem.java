@@ -88,6 +88,7 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
 
     private DeviceInfoUtils mDeviceUtils;
 
+	private UpdateNotification mUpdateNotification;
     private UpdateService.NotificationInfo mNotificationInfo;
       
     private Context mContext;
@@ -127,18 +128,23 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
 
         mUpdatePackage = null;
         DownloadHelper.init(this, this);
-        mRomUpdater = new RomUpdater(this, true);
+        mRomUpdater = new RomUpdater(this, true, false);
         mRebootHelper = new RebootHelper(new RecoveryHelper(UpdateSystem.this));
         mRomUpdater.addUpdaterListener(this);
+		mUpdateNotification = new UpdateNotification(this);
 
         if (mNotificationInfo != null) {
             if (mNotificationInfo.mNotificationId == UpdateService.NOTIFICATION_UPDATE) {
                 mRomUpdater.setLastUpdates(mNotificationInfo.mPackageInfosRom);
             } else {
-                mRomUpdater.check(true);
+				mRomUpdater.check(true);
             }
         } else if (DownloadHelper.isDownloading()) {
             mState = STATE_DOWNLOADING;
+			mUpdateNotification.cancelUpdate();
+            updateMessages((PackageInfo) null);
+		} else if (DownloadHelper.isDownloadFinished()) {
+            mState = STATE_INSTALL;
             updateMessages((PackageInfo) null);
         } else {
             mRomUpdater.check(true);
@@ -181,6 +187,7 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
     protected void onResume() {
         super.onResume();
         DownloadHelper.registerCallback(this);
+		updateMessages(mUpdatePackage);
     }
 
     @SuppressLint("MissingSuperCall")
@@ -257,14 +264,13 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
                 mIsUpdate = true;
                 mIsDownloading = true;
                 setHeaderText(R.string.update_system_header_update_downloading);
-                mPreDescription = String.format(getResources().getString(
-                        R.string.update_system_brief_description_update_available), 
-                        mUpdatePackage.getText());
+				mDescription.setText(R.string.update_system_brief_description_update_downloading);
                 mActionIcon.setImageResource(R.drawable.ic_action_cancel);
                 mPreAction = getResources().getString(R.string.update_system_action_cancel);
-                mUpdateSize.setText(String.format(
-                        getResources().getString(R.string.update_system_update_size),
-                        Formatter.formatShortFileSize(this, Long.decode(mUpdatePackage.getSize()))));
+				if (!mRomUpdater.isScanning() && mUpdatePackage != null) {
+					mUpdateSize.setText(String.format(getResources().getString(R.string.update_system_update_size),
+							Formatter.formatShortFileSize(this, Long.decode(mUpdatePackage.getSize()))));
+				}
                 break;
             case STATE_ERROR:
                 setHeaderText(R.string.update_system_header_update_downloading_failed);
@@ -282,9 +288,11 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
                 break;
         }
         CharSequence styledAction = Html.fromHtml(mPreAction);
-        CharSequence styledDesc = Html.fromHtml(mPreDescription);
         mAction.setText(styledAction);
-        mDescription.setText(styledDesc);
+		if (!mIsDownloading) {
+			CharSequence styledDesc = Html.fromHtml(mPreDescription);
+			mDescription.setText(styledDesc);
+		}
 
         mProgressBar.setVisibility(mIsDownloading ? View.VISIBLE : View.GONE);
         mUpdateSize.setVisibility(mIsUpdate ? View.VISIBLE : View.GONE);
@@ -317,6 +325,7 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
                     break;
                 case STATE_ERROR:
                     mState = STATE_CHECK;
+					updateMessages((PackageInfo) null);
                     mRomUpdater.check(true);
                     break;
                 case STATE_INSTALL:
@@ -352,14 +361,11 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
 
     @Override
     public void onDownloadFinished(Uri uri, final String md5) {
-        if (uri != null) {
-            mState = STATE_INSTALL;
-            updateMessages((PackageInfo) null);
-            addFile(uri, md5);
-        } else {
-            mState = STATE_CHECK;
-            mRomUpdater.check(true);
-        }
+        mState = STATE_INSTALL;
+        updateMessages((PackageInfo) null);
+		if (uri != null) {
+			addFile(uri, md5);
+		}
     }
 
     public void addFile(Uri uri, final String md5) {
