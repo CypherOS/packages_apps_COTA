@@ -31,6 +31,7 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import co.aoscp.cota.UpdateNotification;
 import co.aoscp.cota.R;
 import co.aoscp.cota.services.UpdateService;
 import co.aoscp.cota.utils.FileUtils;
