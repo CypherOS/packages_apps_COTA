@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import co.aoscp.cota.App;
-import co.aoscp.cota.updater.RomUpdater;
+import co.aoscp.cota.UpdateManager;
 import co.aoscp.cota.utils.AlarmUtils;
 import co.aoscp.cota.utils.DeviceInfoUtils;
 import co.aoscp.cota.utils.PreferenceUtils;
@@ -21,14 +21,14 @@ public class BootReceiver extends BroadcastReceiver {
 
     private static final String TAG = "BootReceiver";
 
-    private RomUpdater mRomUpdater;
+    private UpdateManager mUpdateManager;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive intent received " + intent.toString());
 
-        mRomUpdater = new RomUpdater(context, true, true);
-        mRomUpdater.check(true);
+        mUpdateManager = new UpdateManager(context, true, true);
+        mUpdateManager.check(true);
         AlarmUtils.setAlarm(context, true);
 
         if (!PreferenceUtils.getPreference(context, PreferenceUtils.PROPERTY_FIRST_BOOT, false)) {

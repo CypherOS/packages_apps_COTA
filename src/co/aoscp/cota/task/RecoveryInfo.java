@@ -17,41 +17,71 @@
  * along with CypherOS OTA.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package co.aoscp.cota.helpers.recovery;
+package co.aoscp.cota.task;
 
 import android.content.Context;
-
-import co.aoscp.cota.utils.UpdateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TwrpRecovery extends RecoveryInfo {
+public class RecoveryInfo {
 
-    public TwrpRecovery() {
-        super();
+	public static final int TWRP = 1;
 
-        setId(UpdateUtils.TWRP);
+    private int id;
+    private String name = null;
+    private String internalSdcard = null;
+    private String externalSdcard = null;
+
+    public RecoveryInfo() {
+		setId(TWRP);
         setName("twrp");
         setInternalSdcard("sdcard");
         setExternalSdcard("external_sd");
     }
 
-    @Override
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getInternalSdcard() {
+        return internalSdcard;
+    }
+
+    public void setInternalSdcard(String sdcard) {
+        this.internalSdcard = sdcard;
+    }
+
+    public String getExternalSdcard() {
+        return externalSdcard;
+    }
+
+    public void setExternalSdcard(String sdcard) {
+        this.externalSdcard = sdcard;
+    }
+
     public String getCommandsFile() {
         return "openrecoveryscript";
     }
 
-    @Override
     public String[] getCommands(Context context, String[] items, String[] originalItems)
             throws Exception {
-
         List<String> commands = new ArrayList<>();
         for (String item : items) {
             commands.add("install " + item);
         }
-
         return commands.toArray(new String[commands.size()]);
-
     }
 }

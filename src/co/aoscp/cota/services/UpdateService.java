@@ -17,8 +17,8 @@ import android.os.HandlerThread;
 
 import co.aoscp.cota.R;
 import co.aoscp.cota.UpdateSystem;
-import co.aoscp.cota.updater.Updater;
-import co.aoscp.cota.updater.Updater.PackageInfo;
+import co.aoscp.cota.UpdateManager;
+import co.aoscp.cota.UpdateManager.PackageInfo;
 import co.aoscp.cota.utils.AlarmUtils;
 
 import java.io.Serializable;
@@ -31,19 +31,18 @@ public class UpdateService extends Service {
     public static final int NOTIFICATION_UPDATE = 122303235;
     public static final int NOTIFICATION_INSTALL = 122303246;
 
-    private HandlerThread handlerThread;
-    private Handler handler;
-
     private static Context mContext;
+    private HandlerThread mMainThread;
+    private Handler mBgThread;
 
     public static void start(Context context) {
         start(context, null);
     }
 
     private static void start(Context context, String action) {
-        Intent i = new Intent(context, UpdateService.class);
-        i.setAction(action);
-        context.startService(i);
+        Intent updateService = new Intent(context, UpdateService.class);
+        updateService.setAction(action);
+        context.startService(updateService);
         mContext = context;
     }
 
@@ -53,24 +52,25 @@ public class UpdateService extends Service {
         return null;
     }
 
+    @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate: Service starting");
+        Log.d(TAG, "Starting COTA");
 
-        handlerThread = new HandlerThread("COTA System Update Service");
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
+        mMainThread = new HandlerThread("COTA System Update Service");
+        mMainThread.start();
+        mBgThread = new Handler(mMainThread.getLooper());
         AlarmUtils.setAlarm(this, true);
     }
 
     @Override
     public void onDestroy() {
-        handlerThread.quitSafely();
+        mMainThread.quitSafely();
         super.onDestroy();
     }
 
     public static class NotificationInfo implements Serializable {
         public int mNotificationId;
-        public Updater.PackageInfo[] mPackageInfosRom;
+        public UpdateManager.PackageInfo[] mPackageInfosRom;
     }
 }

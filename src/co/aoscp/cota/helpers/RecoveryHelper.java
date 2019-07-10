@@ -24,48 +24,29 @@ import android.content.Context;
 import android.util.SparseArray;
 import android.util.Log;
 
-import co.aoscp.cota.helpers.recovery.RecoveryInfo;
-import co.aoscp.cota.helpers.recovery.TwrpRecovery;
+import co.aoscp.cota.task.RecoveryInfo;
 import co.aoscp.cota.utils.FileUtils;
 import co.aoscp.cota.utils.UpdateUtils;
 
 public class RecoveryHelper {
-    private static final String TAG = "COTA:RecoveryHelper";
 
-    private SparseArray<RecoveryInfo> mRecoveries = new SparseArray<>();
+    private static final String TAG = "RecoveryHelper";
+
     private Context mContext;
+	private RecoveryInfo mRecovery;
 
     public RecoveryHelper(Context context) {
-
         mContext = context;
-
-        mRecoveries.put(UpdateUtils.TWRP, new TwrpRecovery());
+		mRecovery = new RecoveryInfo();
     }
 
-    private RecoveryInfo getRecovery(int id) {
-        for (int i = 0; i < mRecoveries.size(); i++) {
-            int key = mRecoveries.keyAt(i);
-            RecoveryInfo info = mRecoveries.get(key);
-            if (info.getId() == id) {
-                return info;
-            }
-        }
-        return null;
+    public String getCommandsFile() {
+        return mRecovery.getCommandsFile();
     }
 
-    public String getCommandsFile(int id) {
-
-        RecoveryInfo info = getRecovery(id);
-
-        return info.getCommandsFile();
-    }
-
-    public String getRecoveryFilePath(int id, String filePath) {
-
-        RecoveryInfo info = getRecovery(id);
-
-        String internalStorage = info.getInternalSdcard();
-        String externalStorage = info.getExternalSdcard();
+    public String getRecoveryFilePath(String filePath) {
+        String internalStorage = mRecovery.getInternalSdcard();
+        String externalStorage = mRecovery.getExternalSdcard();
 
         String primarySdcard = FileUtils.getPrimarySdCard();
         String secondarySdcard = FileUtils.getSecondarySdCard();
@@ -132,10 +113,7 @@ public class RecoveryHelper {
         return filePath;
     }
 
-    public String[] getCommands(int id, String[] items, String[] originalItems) throws Exception {
-
-        RecoveryInfo info = getRecovery(id);
-
-        return info.getCommands(mContext, items, originalItems);
+    public String[] getCommands(String[] items, String[] originalItems) throws Exception {
+        return mRecovery.getCommands(mContext, items, originalItems);
     }
 }
