@@ -4,8 +4,8 @@
     package="co.aoscp.cota"
     coreApp="true"
     android:sharedUserId="android.uid.system"
-    android:versionCode="25"
-    android:versionName="3.6.3">
+    android:versionCode="7"
+    android:versionName="7.0.0">
 
     <uses-sdk
         android:minSdkVersion="25"
@@ -55,12 +55,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
                 <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".receivers.FeedbackReceiver">
-            <intent-filter>
-                <action android:name="com.aoscp.FEEDBACK" />
             </intent-filter>
         </receiver>
 

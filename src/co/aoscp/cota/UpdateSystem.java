@@ -48,9 +48,9 @@ import co.aoscp.cota.helpers.RebootHelper;
 import co.aoscp.cota.helpers.RecoveryHelper;
 import co.aoscp.cota.receivers.DownloadReceiver;
 import co.aoscp.cota.services.UpdateService;
-import co.aoscp.cota.updater.RomUpdater;
-import co.aoscp.cota.updater.Updater.PackageInfo;
-import co.aoscp.cota.updater.Updater.UpdaterListener;
+import co.aoscp.cota.UpdateManager;
+import co.aoscp.cota.UpdateManager.PackageInfo;
+import co.aoscp.cota.UpdateManager.UpdateListener;
 import co.aoscp.cota.utils.Constants;
 import co.aoscp.cota.utils.DeviceInfoUtils;
 import co.aoscp.cota.utils.FileUtils;
@@ -65,7 +65,7 @@ import java.lang.CharSequence;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateSystem extends ObservableActivity implements UpdaterListener, 
+public class UpdateSystem extends ObservableActivity implements UpdateListener, 
     DownloadHelper.DownloadCallback {
 
     private static final String TAG = "UpdateSystem";
@@ -80,7 +80,7 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
     private boolean mIsUpdate = false;
     private boolean mIsDownloading = false;
 
-    private RomUpdater mRomUpdater;
+    private UpdateManager mUpdateManager;
     private RebootHelper mRebootHelper;
 
     private PackageInfo mUpdatePackage;
@@ -128,22 +128,22 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
 
         mUpdatePackage = null;
         DownloadHelper.init(this, this);
-        mRomUpdater = new RomUpdater(this, true, false);
+        mUpdateManager = new UpdateManager(this, true, false);
         mRebootHelper = new RebootHelper(new RecoveryHelper(UpdateSystem.this));
-        mRomUpdater.addUpdaterListener(this);
+        mUpdateManager.addUpdateListener(this);
         mUpdateNotification = new UpdateNotification(this);
 
         if (mNotificationInfo != null) {
             if (mNotificationInfo.mNotificationId == UpdateService.NOTIFICATION_UPDATE) {
-                mRomUpdater.setLastUpdates(mNotificationInfo.mPackageInfosRom);
+                mUpdateManager.setLastUpdates(mNotificationInfo.mPackageInfosRom);
             } else {
-                mRomUpdater.check(true);
+                mUpdateManager.check(true);
             }
         } else if (DownloadHelper.isDownloading()) {
             mState = STATE_DOWNLOADING;
             updateMessages((PackageInfo) null);
         } else {
-            mRomUpdater.check(true);
+            mUpdateManager.check(true);
         }
     }
 
@@ -195,13 +195,13 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
     }
 
     @Override
-    public void startChecking() {
+    public void onUpdateChecking() {
         mState = STATE_CHECK;
         updateMessages(mUpdatePackage);
     }
 
     @Override
-    public void versionFound(PackageInfo[] info) {
+    public void onUpdateChecked(PackageInfo[] info) {
         mState = STATE_FOUND;
         if (info != null && info.length > 0) {
             if(FileUtils.isOnDownloadList(this, info[0].getFilename())) {
@@ -244,7 +244,7 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
                 }
                 break;
             case STATE_FOUND:
-                if (!mRomUpdater.isScanning() && mUpdatePackage != null) {
+                if (!mUpdateManager.isScanning() && mUpdatePackage != null) {
                     mIsUpdate = true;
                     setHeaderText(R.string.update_system_header_update_available);
                     mPreDescription = String.format(getResources().getString(
@@ -264,7 +264,7 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
                 mDescription.setText(R.string.update_system_brief_description_update_downloading);
                 mActionIcon.setImageResource(R.drawable.ic_action_cancel);
                 mPreAction = getResources().getString(R.string.update_system_action_cancel);
-                if (!mRomUpdater.isScanning() && mUpdatePackage != null) {
+                if (!mUpdateManager.isScanning() && mUpdatePackage != null) {
                     mUpdateSize.setText(String.format(getResources().getString(R.string.update_system_update_size),
                             Formatter.formatShortFileSize(this, Long.decode(mUpdatePackage.getSize()))));
                 }
@@ -302,11 +302,11 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
                 default:
                 case STATE_CHECK:
                     mState = STATE_CHECK;
-                    mRomUpdater.check(true);
+                    mUpdateManager.check(true);
                     updateMessages((PackageInfo) null);
                     break;
                 case STATE_FOUND:
-                    if (!mRomUpdater.isScanning() && mUpdatePackage != null) {
+                    if (!mUpdateManager.isScanning() && mUpdatePackage != null) {
                         mState = STATE_DOWNLOADING;
                         DownloadHelper.registerCallback(UpdateSystem.this);
                         DownloadHelper.downloadFile(mUpdatePackage.getPath(),
@@ -323,7 +323,7 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
                 case STATE_ERROR:
                     mState = STATE_CHECK;
                     updateMessages((PackageInfo) null);
-                    mRomUpdater.check(true);
+                    mUpdateManager.check(true);
                     break;
                 case STATE_INSTALL:
                     String[] items = new String[mFiles.size()];
@@ -364,7 +364,7 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
             addFile(uri, md5);
         } else {
             mState = STATE_CHECK;
-            mRomUpdater.check(true);
+            mUpdateManager.check(true);
         }
     }
 
@@ -400,7 +400,8 @@ public class UpdateSystem extends ObservableActivity implements UpdaterListener,
     }
 
     @Override
-    public void checkError(String cause) {
+    public void onUpdateError(String cause) {
+		// no op
     }
 
     protected GlifLayout getLayout() {

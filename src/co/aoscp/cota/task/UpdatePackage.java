@@ -17,9 +17,9 @@
  * along with CypherOS OTA.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package co.aoscp.cota.updater;
+package co.aoscp.cota.task;
 
-import co.aoscp.cota.updater.Updater.PackageInfo;
+import co.aoscp.cota.UpdateManager.PackageInfo;
 import co.aoscp.cota.utils.FileUtils;
 import co.aoscp.cota.utils.Version;
 
