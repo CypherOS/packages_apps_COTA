@@ -71,46 +71,34 @@ public class RebootHelper {
     }
 
     private void reboot(final Context context, final String[] items) {
-
         try {
-
             File f = new File("/cache/recovery/command");
             f.delete();
 
-            int[] recoveries = new int[]{
-                    UpdateUtils.TWRP
-            };
+            String file = mRecoveryHelper.getCommandsFile();
+            FileOutputStream os = null;
+            try {
+                os = new FileOutputStream("/cache/recovery/" + file, false);
+                String[] files = new String[items.length];
+                for (int k = 0; k < files.length; k++) {
+                    files[k] = mRecoveryHelper.getRecoveryFilePath(items[k]);
+                }
 
-            for (int recovery : recoveries) {
-                String file = mRecoveryHelper.getCommandsFile(recovery);
-
-                FileOutputStream os = null;
-                try {
-                    os = new FileOutputStream("/cache/recovery/" + file, false);
-
-                    String[] files = new String[items.length];
-                    for (int k = 0; k < files.length; k++) {
-                        files[k] = mRecoveryHelper.getRecoveryFilePath(recovery, items[k]);
-                    }
-
-                    String[] commands = mRecoveryHelper.getCommands(recovery, files, items);
-                    if (commands != null) {
-                        int size = commands.length, j = 0;
-                        for (; j < size; j++) {
-                            os.write((commands[j] + "\n").getBytes("UTF-8"));
-                        }
-                    }
-                } finally {
-                    if (os != null) {
-                        os.close();
-                        UpdateUtils.setPermissions("/cache/recovery/" + file, 0644,
-                                android.os.Process.myUid(), 2001);
+                String[] commands = mRecoveryHelper.getCommands(files, items);
+                if (commands != null) {
+                    int size = commands.length, j = 0;
+                    for (; j < size; j++) {
+                        os.write((commands[j] + "\n").getBytes("UTF-8"));
                     }
                 }
+            } finally {
+                if (os != null) {
+                    os.close();
+                    UpdateUtils.setPermissions("/cache/recovery/" + file, 0644,
+                            android.os.Process.myUid(), 2001);
+                }
             }
-
             ((PowerManager) context.getSystemService(Activity.POWER_SERVICE)).reboot("recovery");
-
         } catch (Exception e) {
             e.printStackTrace();
         }
