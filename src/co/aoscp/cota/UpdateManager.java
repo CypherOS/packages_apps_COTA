@@ -17,7 +17,7 @@
  * along with CypherOS OTA.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package co.aoscp.cota.updater;
+package co.aoscp.cota;
 
 import android.app.Activity;
 import android.content.Context;
@@ -28,8 +28,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import co.aoscp.cota.task.Server;
+
 import co.aoscp.cota.UpdateNotification;
 import co.aoscp.cota.services.UpdateService;
+import co.aoscp.cota.utils.DeviceInfoUtils;
 import co.aoscp.cota.utils.UpdateUtils;
 import co.aoscp.cota.utils.Version;
 
@@ -39,36 +42,40 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Updater implements Response.Listener<JSONObject>, Response.ErrorListener {
+public class UpdateManager implements Response.Listener<JSONObject>, Response.ErrorListener {
 
     private Context mContext;
-    private Server[] mServers;
     private PackageInfo[] mLastUpdates = new PackageInfo[0];
-    private List<UpdaterListener> mListeners = new ArrayList<>();
+    private List<UpdateListener> mListeners = new ArrayList<>();
     private RequestQueue mQueue;
     private Server mServer;
     private boolean mScanning = false;
     private boolean mFromAlarm;
     private boolean mWithNotification;
     private boolean mServerWorks = false;
-    private int mCurrentServer = -1;
 
     private UpdateNotification mUpdateNotification;
 
-    public Updater(Context context, Server[] servers, boolean fromAlarm, boolean withNotification) {
+    public UpdateManager(Context context, boolean fromAlarm, boolean withNotification) {
         mContext = context;
-        mServers = servers;
+        mServer = new Server();
         mFromAlarm = fromAlarm;
         mWithNotification = withNotification;
         mQueue = Volley.newRequestQueue(context);
         mUpdateNotification = new UpdateNotification(context);
     }
 
-    public abstract Version getVersion();
+    public Version getVersion() {
+        return new Version(DeviceInfoUtils.getExplicitVersion());
+    }
 
-    public abstract String getDevice();
+    public String getDevice() {
+        return DeviceInfoUtils.getDevice();
+    }
 
-    public abstract int getErrorStringId();
+    public int getErrorStringId() {
+        return R.string.download_failed_title;
+    }
 
     protected Context getContext() {
         return mContext;
@@ -85,7 +92,7 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
         mLastUpdates = infos;
     }
 
-    public void addUpdaterListener(UpdaterListener listener) {
+    public void addUpdateListener(UpdateListener listener) {
         mListeners.add(listener);
     }
 
@@ -104,8 +111,6 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
 
     private void nextServerCheck() {
         mScanning = true;
-        mCurrentServer++;
-        mServer = mServers[mCurrentServer];
         JsonObjectRequest jsObjRequest = new JsonObjectRequest(mServer.getUrl(
                 getDevice(), getVersion()), null, this, this);
         mQueue.add(jsObjRequest);
@@ -133,13 +138,8 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
                     }
                 } else {
                     mServerWorks = true;
-                    if (mCurrentServer < mServers.length - 1) {
-                        nextServerCheck();
-                        return;
-                    }
                 }
             }
-            mCurrentServer = -1;
             setLastUpdates(lastUpdates);
             fireCheckCompleted(lastUpdates);
         } catch (Exception ex) {
@@ -155,10 +155,6 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
     }
 
     private boolean versionError(String error) {
-        if (mCurrentServer < mServers.length - 1) {
-            nextServerCheck();
-            return true;
-        }
         if (!mFromAlarm && !mServerWorks) {
             int id = getErrorStringId();
             if (error != null) {
@@ -168,7 +164,6 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
                 UpdateUtils.showToastOnUiThread(getContext(), id);
             }
         }
-        mCurrentServer = -1;
         fireCheckCompleted(null);
         fireCheckError(error);
         return false;
@@ -178,7 +173,7 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
         return mScanning;
     }
 
-    public void removeUpdaterListener(UpdaterListener listener) {
+    public void removeUpdateListener(UpdateListener listener) {
         mListeners.remove(listener);
     }
 
@@ -187,7 +182,7 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
             ((Activity) mContext).runOnUiThread(new Runnable() {
 
                 public void run() {
-                    for (UpdaterListener listener : mListeners) {
+                    for (UpdateListener listener : mListeners) {
                         listener.startChecking();
                     }
                 }
@@ -200,7 +195,7 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
             ((Activity) mContext).runOnUiThread(new Runnable() {
 
                 public void run() {
-                    for (UpdaterListener listener : mListeners) {
+                    for (UpdateListener listener : mListeners) {
                         listener.versionFound(info);
                     }
                 }
@@ -213,7 +208,7 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
             ((Activity) mContext).runOnUiThread(new Runnable() {
 
                 public void run() {
-                    for (UpdaterListener listener : mListeners) {
+                    for (UpdateListener listener : mListeners) {
                         listener.checkError(cause);
                     }
                 }
@@ -246,7 +241,7 @@ public abstract class Updater implements Response.Listener<JSONObject>, Response
         String getDeltaMd5();
     }
 
-    public interface UpdaterListener {
+    public interface UpdateListener {
 
         void startChecking();
 

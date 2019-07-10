@@ -17,12 +17,11 @@
  * along with CypherOS OTA.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package co.aoscp.cota.updater.server;
+package co.aoscp.cota.task;
 
 import android.util.Log;
-import co.aoscp.cota.updater.Server;
-import co.aoscp.cota.updater.UpdatePackage;
-import co.aoscp.cota.updater.Updater;
+
+import co.aoscp.cota.UpdateManager;
 import co.aoscp.cota.utils.Constants;
 import co.aoscp.cota.utils.Version;
 
@@ -34,27 +33,24 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class CypherServer implements Server {
-	
-	private static final String TAG = Constants.BASE_TAG + "CypherServer";
+public class Server {
 
+	private static final String TAG = Constants.BASE_TAG + "Server";
     private static final String URL = "http://updates.cypheros.co/getter.php?d=%s";
 
     private String mDevice = null;
     private String mError = null;
     private Version mVersion;
 
-    @Override
     public String getUrl(String device, Version version) {
         mDevice = device;
         mVersion = version;
         return String.format(URL, device);
     }
 
-    @Override
-    public List<Updater.PackageInfo> createPackageInfoList(JSONObject response) throws Exception {
+    public List<UpdateManager.PackageInfo> createPackageInfoList(JSONObject response) throws Exception {
         mError = null;
-        List<Updater.PackageInfo> list = new ArrayList<>();
+        List<UpdateManager.PackageInfo> list = new ArrayList<>();
         mError = response.optString("error");
         if (mError == null || mError.isEmpty()) {
             JSONArray updates = response.getJSONArray("updates");
@@ -73,10 +69,10 @@ public class CypherServer implements Server {
                 }
             }
         }
-        Collections.sort(list, new Comparator<Updater.PackageInfo>() {
+        Collections.sort(list, new Comparator<UpdateManager.PackageInfo>() {
 
             @Override
-            public int compare(Updater.PackageInfo lhs, Updater.PackageInfo rhs) {
+            public int compare(UpdateManager.PackageInfo lhs, UpdateManager.PackageInfo rhs) {
                 return Version.compare(lhs.getVersion(), rhs.getVersion());
             }
 
@@ -85,7 +81,6 @@ public class CypherServer implements Server {
         return list;
     }
 
-    @Override
     public String getError() {
         return mError;
     }

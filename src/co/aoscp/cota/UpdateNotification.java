@@ -29,8 +29,8 @@ import co.aoscp.cota.UpdateSystem;
 import co.aoscp.cota.receivers.DownloadReceiver;
 import co.aoscp.cota.services.UpdateService;
 import co.aoscp.cota.services.UpdateService.NotificationInfo;
-import co.aoscp.cota.updater.Updater;
-import co.aoscp.cota.updater.Updater.PackageInfo;
+import co.aoscp.cota.UpdateManager;
+import co.aoscp.cota.UpdateManager.PackageInfo;
 
 public class UpdateNotification {
 
