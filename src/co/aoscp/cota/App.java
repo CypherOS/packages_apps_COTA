@@ -22,7 +22,6 @@ public class App extends PiwikApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-
         sApplication = this;
     }
 
