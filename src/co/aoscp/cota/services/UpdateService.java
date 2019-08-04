@@ -47,7 +47,7 @@ public class UpdateService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent arg0) {
+    public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind: Service bound");
         return null;
     }

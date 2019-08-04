@@ -89,5 +89,14 @@
     <string name="update_system_notification_install_update">Update is ready</string>
     <string name="update_system_notification_install_update_desc">Tap to install</string>
 
+    <!-- Installing (A/B) -->
+    <string name="update_system_header_update_installing">Installing system update</string>
+    <string name="update_system_brief_description_update_installing">Do not power off the device while installation is in progress</string>
+
+    <!-- Reboot (A/B) -->
+    <string name="update_system_header_update_reboot">System update installed</string>
+    <string name="update_system_brief_description_update_reboot">Reboot the device to apply the update</string>
+    <string name="update_system_action_reboot"><![CDATA[<b>Reboot</b>]]></string>
+
     <string name="update_system_learn_more">Learn more</string>
 </resources>
