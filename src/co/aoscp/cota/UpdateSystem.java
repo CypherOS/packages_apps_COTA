@@ -64,9 +64,10 @@ import java.io.File;
 import java.lang.CharSequence;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipFile;
 
 public class UpdateSystem extends ObservableActivity implements UpdateListener, 
-    DownloadHelper.DownloadCallback {
+    DownloadHelper.DownloadCallback, UpdateController.InstallListener {
 
     private static final String TAG = "UpdateSystem";
 
@@ -75,7 +76,9 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
     private static final int STATE_FOUND = 1;
     private static final int STATE_DOWNLOADING = 2;
     private static final int STATE_INSTALL = 3;
-    private static final int STATE_ERROR = 4;
+	private static final int STATE_INSTALLING = 4;
+	private static final int STATE_INSTALLED = 5;
+    private static final int STATE_ERROR = 6;
 
     private boolean mIsUpdate = false;
     private boolean mIsDownloading = false;
@@ -84,7 +87,8 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
     private RebootHelper mRebootHelper;
 
     private PackageInfo mUpdatePackage;
-    private List<File> mFiles = new ArrayList<>();
+	private List<File> mFiles = new ArrayList<>();
+	private UpdateController mUpdateController;
 
     private DeviceInfoUtils mDeviceUtils;
 
@@ -283,7 +287,24 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
                 mActionIcon.setImageResource(R.drawable.ic_action_download_install);
                 mPreAction = getResources().getString(R.string.update_system_action_install);
                 break;
+			case STATE_INSTALLING:
+                setHeaderText(R.string.update_system_header_update_installing);
+                mPreDescription = getResources().getString(
+                        R.string.update_system_brief_description_update_installing);
+                mActionIcon.setImageResource(R.drawable.ic_action_download_install);
+                mPreAction = "";
+                break;
+			case STATE_INSTALLED:
+                setHeaderText(R.string.update_system_header_update_reboot);
+                mPreDescription = getResources().getString(
+                        R.string.update_system_brief_description_update_reboot);
+                mActionIcon.setImageResource(R.drawable.ic_action_download_install);
+                mPreAction = getResources().getString(R.string.update_system_action_reboot);
+                break;
         }
+
+		boolean isInstallingAB = mState == STATE_INSTALLING;
+		mAction.setVisibility(isInstallingAB ? View.GONE : View.VISIBLE);
         CharSequence styledAction = Html.fromHtml(mPreAction);
         mAction.setText(styledAction);
         if (!mIsDownloading) {
@@ -291,7 +312,8 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
             mDescription.setText(styledDesc);
         }
 
-        mProgressBar.setVisibility(mIsDownloading ? View.VISIBLE : View.GONE);
+        boolean showProgress = mIsDownloading || isInstallingAB;
+        mProgressBar.setVisibility(showProgress ? View.VISIBLE : View.GONE);
         mUpdateSize.setVisibility(mIsUpdate ? View.VISIBLE : View.GONE);
     }
 
@@ -326,16 +348,40 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
                     mUpdateManager.check(true);
                     break;
                 case STATE_INSTALL:
-                    String[] items = new String[mFiles.size()];
-                    for (int i = 0; i < mFiles.size(); i++) {
-                        File file = mFiles.get(i);
-                        items[i] = file.getAbsolutePath();
-                    }
-                    mRebootHelper.showRebootDialog(UpdateSystem.this, items);
+				    installABOrReboot();
+                    break;
+				case STATE_INSTALLED:
+				    reboot(false);
                     break;
             }
         }
     };
+
+	private void installABOrReboot() {
+		File updateFile = mFiles.get(0);
+		ZipFile zipFile = new ZipFile(updateFile);
+		boolean isABUpdate = ABUpdateController.isABUpdate(zipFile);
+		zipFile.close();
+
+		mUpdateController = new UpdateController(updateFile);
+		mUpdateController.setListener(this);
+		if (isABUpdate) {
+			mState = STATE_INSTALLING;
+			updateMessages((PackageInfo) null);
+			mUpdateController.start();
+		} else {
+			reboot(true);
+		}
+	}
+
+	private void reboot(boolean toRecovery) {
+		String[] items = new String[mFiles.size()];
+        for (int i = 0; i < mFiles.size(); i++) {
+            File file = mFiles.get(i);
+            items[i] = file.getAbsolutePath();
+        }
+		mRebootHelper.showRebootDialog(UpdateSystem.this, items, toRecovery);
+	}
 
     @Override
     public void onDownloadStarted() {
@@ -368,7 +414,21 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
         }
     }
 
+	@Override
+    public void onInstallProgress(int status, int progress) {
+		if (status != UpdateController.FAILED) {
+			if (progress >= 0 && progress <= 100) {
+				mProgressBar.setProgress(progress);
+			}
+		} else if (status == UpdateController.INSTALLED) {
+			mState = STATE_INSTALLED;
+			mUpdateController.removeListener(this);
+			updateMessages((PackageInfo) null);
+		}
+    }
+
     public void addFile(Uri uri, final String md5) {
+		mFiles.clear();
         String filePath = uri.toString().replace("file://", "");
         File file = new File(filePath);
         addFile(file, md5);
@@ -396,7 +456,7 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
     }
 
     private void reallyAddFile(final File file) {
-        mFiles.add(file);
+		mFiles.add(file);
     }
 
     @Override
