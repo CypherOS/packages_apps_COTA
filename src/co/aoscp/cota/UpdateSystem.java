@@ -61,12 +61,14 @@ import org.piwik.sdk.PiwikApplication;
 import org.piwik.sdk.TrackHelper;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.CharSequence;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipFile;
 
-public class UpdateSystem extends ObservableActivity implements UpdateListener, 
-    DownloadHelper.DownloadCallback {
+public class UpdateSystem extends ObservableActivity implements UpdateListener,
+    DownloadHelper.DownloadCallback, UpdateController.InstallListener {
 
     private static final String TAG = "UpdateSystem";
 
@@ -75,24 +77,28 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
     private static final int STATE_FOUND = 1;
     private static final int STATE_DOWNLOADING = 2;
     private static final int STATE_INSTALL = 3;
-    private static final int STATE_ERROR = 4;
+    private static final int STATE_INSTALLING = 4;
+    private static final int STATE_INSTALLED = 5;
+    private static final int STATE_ERROR = 6;
 
     private boolean mIsUpdate = false;
     private boolean mIsDownloading = false;
+	private boolean mIsSideload = false;
 
     private UpdateManager mUpdateManager;
     private RebootHelper mRebootHelper;
 
     private PackageInfo mUpdatePackage;
     private List<File> mFiles = new ArrayList<>();
+    private UpdateController mUpdateController;
 
     private DeviceInfoUtils mDeviceUtils;
 
     private UpdateNotification mUpdateNotification;
     private UpdateService.NotificationInfo mNotificationInfo;
-      
+
     private Context mContext;
-      
+
     protected Context getContext() {
         return mContext;
     }
@@ -141,7 +147,7 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
             }
         } else if (DownloadHelper.isDownloading()) {
             mState = STATE_DOWNLOADING;
-            updateMessages((PackageInfo) null);
+            updateMessages((PackageInfo) null, mIsSideload);
         } else {
             mUpdateManager.check(true);
         }
@@ -184,7 +190,7 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
     protected void onResume() {
         super.onResume();
         DownloadHelper.registerCallback(this);
-        updateMessages(mUpdatePackage);
+        updateMessages(mUpdatePackage, mIsSideload);
     }
 
     @SuppressLint("MissingSuperCall")
@@ -197,24 +203,31 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
     @Override
     public void onUpdateChecking() {
         mState = STATE_CHECK;
-        updateMessages(mUpdatePackage);
+        updateMessages(mUpdatePackage, mIsSideload);
     }
 
     @Override
     public void onUpdateChecked(PackageInfo[] info) {
+		mIsSideload = false;
         mState = STATE_FOUND;
         if (info != null && info.length > 0) {
-            if(FileUtils.isOnDownloadList(this, info[0].getFilename())) {
+            if (FileUtils.isOnDownloadList(this, info[0].getFilename())) {
                 mState = STATE_INSTALL;
                 addFile(FileUtils.getFile(this, info[0].getFilename()), info[0].getMd5());
             }
-        }
-        updateMessages(info);
+        } else {
+			if (FileUtils.isUpdateSideloaded(this)) {
+				mIsSideload = true;
+				mState = STATE_INSTALL;
+				addFile(FileUtils.getSideload(this), null);
+			}
+		}
+        updateMessages(info, mIsSideload);
     }
 
-    private void updateMessages(PackageInfo[] info) {
+    private void updateMessages(PackageInfo[] info, boolean isSideload) {
         if (info != null && info.length > 0) {
-            updateMessages(info.length > 0 ? info[0] : null);
+            updateMessages(info.length > 0 ? info[0] : null, isSideload);
         }
     }
 
@@ -224,7 +237,7 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
         }
     }
 
-    private void updateMessages(PackageInfo info) {
+    private void updateMessages(PackageInfo info, boolean isSideload) {
         mUpdatePackage = info;
         mIsUpdate = false;
         mIsDownloading = false;
@@ -232,7 +245,7 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
         switch (mState) {
             default:
             case STATE_CHECK:
-                if (mUpdatePackage == null) {
+                if (mUpdatePackage == null && !isSideload) {
                     setHeaderText(R.string.update_system_header_update_to_date);
                     mPreDescription = String.format(getResources().getString(
                             R.string.update_system_brief_description_update_to_date),
@@ -244,7 +257,7 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
                 }
                 break;
             case STATE_FOUND:
-                if (!mUpdateManager.isScanning() && mUpdatePackage != null) {
+                if (!mUpdateManager.isScanning() && mUpdatePackage != null && !isSideload) {
                     mIsUpdate = true;
                     setHeaderText(R.string.update_system_header_update_available);
                     mPreDescription = String.format(getResources().getString(
@@ -264,7 +277,7 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
                 mDescription.setText(R.string.update_system_brief_description_update_downloading);
                 mActionIcon.setImageResource(R.drawable.ic_action_cancel);
                 mPreAction = getResources().getString(R.string.update_system_action_cancel);
-                if (!mUpdateManager.isScanning() && mUpdatePackage != null) {
+                if (!mUpdateManager.isScanning() && mUpdatePackage != null && !isSideload) {
                     mUpdateSize.setText(String.format(getResources().getString(R.string.update_system_update_size),
                             Formatter.formatShortFileSize(this, Long.decode(mUpdatePackage.getSize()))));
                 }
@@ -283,7 +296,24 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
                 mActionIcon.setImageResource(R.drawable.ic_action_download_install);
                 mPreAction = getResources().getString(R.string.update_system_action_install);
                 break;
+            case STATE_INSTALLING:
+                setHeaderText(R.string.update_system_header_update_installing);
+                mPreDescription = getResources().getString(
+                        R.string.update_system_brief_description_update_installing);
+                mActionIcon.setImageResource(R.drawable.ic_action_download_install);
+                mPreAction = "";
+                break;
+            case STATE_INSTALLED:
+                setHeaderText(R.string.update_system_header_update_reboot);
+                mPreDescription = getResources().getString(
+                        R.string.update_system_brief_description_update_reboot);
+                mActionIcon.setImageResource(R.drawable.ic_action_download_install);
+                mPreAction = getResources().getString(R.string.update_system_action_reboot);
+                break;
         }
+
+        boolean isInstallingAB = mState == STATE_INSTALLING;
+        mAction.setVisibility(isInstallingAB ? View.GONE : View.VISIBLE);
         CharSequence styledAction = Html.fromHtml(mPreAction);
         mAction.setText(styledAction);
         if (!mIsDownloading) {
@@ -291,7 +321,8 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
             mDescription.setText(styledDesc);
         }
 
-        mProgressBar.setVisibility(mIsDownloading ? View.VISIBLE : View.GONE);
+        boolean showProgress = mIsDownloading || isInstallingAB;
+        mProgressBar.setVisibility(showProgress ? View.VISIBLE : View.GONE);
         mUpdateSize.setVisibility(mIsUpdate ? View.VISIBLE : View.GONE);
     }
 
@@ -303,39 +334,66 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
                 case STATE_CHECK:
                     mState = STATE_CHECK;
                     mUpdateManager.check(true);
-                    updateMessages((PackageInfo) null);
+                    updateMessages((PackageInfo) null, mIsSideload);
                     break;
                 case STATE_FOUND:
-                    if (!mUpdateManager.isScanning() && mUpdatePackage != null) {
+                    if (!mUpdateManager.isScanning() && mUpdatePackage != null && !mIsSideload) {
                         mState = STATE_DOWNLOADING;
                         DownloadHelper.registerCallback(UpdateSystem.this);
                         DownloadHelper.downloadFile(mUpdatePackage.getPath(),
                                 mUpdatePackage.getFilename(), mUpdatePackage.getMd5());
-                        updateMessages(mUpdatePackage);
+                        updateMessages(mUpdatePackage, mIsSideload);
                         TrackHelper.track().download().version(mUpdatePackage.getFilename()).with(((PiwikApplication) getApplication()).getTracker());
                     }
                     break;
                 case STATE_DOWNLOADING:
                     mState = STATE_CHECK;
                     DownloadHelper.clearDownloads();
-                    updateMessages((PackageInfo) null);
+                    updateMessages((PackageInfo) null, mIsSideload);
                     break;
                 case STATE_ERROR:
                     mState = STATE_CHECK;
-                    updateMessages((PackageInfo) null);
+                    updateMessages((PackageInfo) null, mIsSideload);
                     mUpdateManager.check(true);
                     break;
                 case STATE_INSTALL:
-                    String[] items = new String[mFiles.size()];
-                    for (int i = 0; i < mFiles.size(); i++) {
-                        File file = mFiles.get(i);
-                        items[i] = file.getAbsolutePath();
-                    }
-                    mRebootHelper.showRebootDialog(UpdateSystem.this, items);
+                    installABOrReboot();
+                    break;
+                case STATE_INSTALLED:
+                    reboot(false);
                     break;
             }
         }
     };
+
+    private void installABOrReboot() {
+        File updateFile = mFiles.get(0);
+        boolean isABUpdate = false;
+        try {
+            ZipFile zipFile = new ZipFile(updateFile);
+            isABUpdate = UpdateController.isABUpdate(zipFile);
+            zipFile.close();
+        } catch (IllegalArgumentException | IOException e) {}
+
+        mUpdateController = new UpdateController(updateFile);
+        mUpdateController.setListener(this);
+        if (isABUpdate) {
+            mState = STATE_INSTALLING;
+            updateMessages((PackageInfo) null, mIsSideload);
+            mUpdateController.start();
+        } else {
+            reboot(true);
+        }
+    }
+
+    private void reboot(boolean toRecovery) {
+        String[] items = new String[mFiles.size()];
+        for (int i = 0; i < mFiles.size(); i++) {
+            File file = mFiles.get(i);
+            items[i] = file.getAbsolutePath();
+        }
+        mRebootHelper.showRebootDialog(UpdateSystem.this, items, toRecovery);
+    }
 
     @Override
     public void onDownloadStarted() {
@@ -346,7 +404,7 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
     @Override
     public void onDownloadError(String reason) {
         mState = STATE_ERROR;
-        updateMessages((PackageInfo) null);
+        updateMessages((PackageInfo) null, mIsSideload);
     }
 
     @Override
@@ -360,7 +418,7 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
     public void onDownloadFinished(Uri uri, final String md5) {
         if (uri != null) {
             mState = STATE_INSTALL;
-            updateMessages((PackageInfo) null);
+            updateMessages((PackageInfo) null, mIsSideload);
             addFile(uri, md5);
         } else {
             mState = STATE_CHECK;
@@ -368,13 +426,28 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
         }
     }
 
+    @Override
+    public void onInstallProgress(int status, int progress) {
+        if (status != UpdateController.FAILED) {
+            if (progress >= 0 && progress <= 100) {
+                mProgressBar.setProgress(progress);
+            }
+        } else if (status == UpdateController.INSTALLED) {
+            mState = STATE_INSTALLED;
+            mUpdateController.removeListener(this);
+            updateMessages((PackageInfo) null, mIsSideload);
+        }
+    }
+
     public void addFile(Uri uri, final String md5) {
+        mFiles.clear();
         String filePath = uri.toString().replace("file://", "");
         File file = new File(filePath);
         addFile(file, md5);
     }
 
     private void addFile(final File file, final String md5) {
+		mFiles.clear();
         if (md5 != null && !"".equals(md5)) {
             new Thread() {
                 public void run() {
