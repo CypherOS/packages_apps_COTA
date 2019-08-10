@@ -37,7 +37,7 @@ import java.util.zip.ZipFile;
 
 public class FileUtils {
 
-    private static final String TAG = "FileUtils";
+	private static final String TAG = "FileUtils";
 
     public static final String DOWNLOAD_PATH = new File(Environment
             .getExternalStorageDirectory(), "Updates/").getAbsolutePath();
@@ -59,11 +59,11 @@ public class FileUtils {
     }
 
     private static String[] getDownloadList(Context context) {
-        File downloads = initSettingsHelper(context);
+        File downloads = getDownloadPath(context);
         ArrayList<String> list = new ArrayList<>();
         try {
             for (File f : downloads.listFiles()) {
-                if (isRom(f.getName())) {
+                if (isValidUpdate(f.getName())) {
                     list.add(f.getName());
                 }
             }
@@ -74,10 +74,10 @@ public class FileUtils {
     }
 
     public static String[] getDownloadSizes(Context context) {
-        File downloads = initSettingsHelper(context);
+        File downloads = getDownloadPath(context);
         ArrayList<String> list = new ArrayList<>();
         for (File f : downloads.listFiles()) {
-            if (isRom(f.getName())) {
+            if (isValidUpdate(f.getName())) {
                 list.add(humanReadableByteCount(f.length(), false));
             }
         }
@@ -85,7 +85,7 @@ public class FileUtils {
     }
 
     public static String getDownloadSize(Context context, String fileName) {
-        File downloads = initSettingsHelper(context);
+        File downloads = getDownloadPath(context);
         for (String file : getDownloadList(context)) {
             if (fileName.equals(file)) {
                 File f = new File(downloads, fileName);
@@ -94,9 +94,17 @@ public class FileUtils {
         }
         return "0";
     }
+
+	public static File getSideload(Context context) {
+        File downloads = getDownloadPath(context);
+        for (File f : downloads.listFiles()) {
+            return f;
+        }
+        return null;
+    }
 	
 	public static File getFile(Context context, String fileName) {
-        File downloads = initSettingsHelper(context);
+        File downloads = getDownloadPath(context);
         for (File f : downloads.listFiles()) {
             if (f.getName().equals(fileName)) {
                 return f;
@@ -107,13 +115,25 @@ public class FileUtils {
 
     public static boolean isOnDownloadList(Context context, String fileName) {
         for (String file : getDownloadList(context)) {
-            if (fileName.equals(file))
+            if (fileName.equals(file)) {
                 return true;
+			}
         }
         return false;
     }
 
-    private static boolean isRom(String name) {
+	public static boolean isUpdateSideloaded(Context context) {
+		File downloads = getDownloadPath(context);
+        for (File f : downloads.listFiles()) {
+            if (f.getName().startsWith(PREFIX) 
+				        && f.getName().endsWith(SUFFIX)) {
+                return true;
+            }
+        }
+        return false;
+	}
+
+    private static boolean isValidUpdate(String name) {
         return name.startsWith(PREFIX) && name.endsWith(SUFFIX);
     }
 
@@ -309,7 +329,7 @@ public class FileUtils {
         }
     }
 
-    private static File initSettingsHelper(Context context) {
+    private static File getDownloadPath(Context context) {
         File downloads = new File(DOWNLOAD_PATH);
         downloads.mkdirs();
         return downloads;
@@ -328,7 +348,7 @@ public class FileUtils {
         return f.exists() && f.isDirectory();
     }
 
-    /**
+	/**
      * Get the offset to the compressed data of a file inside the given zip
      *
      * @param zipFile input zip file

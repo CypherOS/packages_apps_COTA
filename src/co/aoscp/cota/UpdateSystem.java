@@ -209,11 +209,16 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
     public void onUpdateChecked(PackageInfo[] info) {
         mState = STATE_FOUND;
         if (info != null && info.length > 0) {
-            if(FileUtils.isOnDownloadList(this, info[0].getFilename())) {
+            if (FileUtils.isOnDownloadList(this, info[0].getFilename())) {
                 mState = STATE_INSTALL;
                 addFile(FileUtils.getFile(this, info[0].getFilename()), info[0].getMd5());
             }
-        }
+        } else {
+			if (FileUtils.isUpdateSideloaded(this)) {
+				mState = STATE_INSTALL;
+				addFile(FileUtils.getSideload(this), null);
+			}
+		}
         updateMessages(info);
     }
 
@@ -439,6 +444,7 @@ public class UpdateSystem extends ObservableActivity implements UpdateListener,
     }
 
     private void addFile(final File file, final String md5) {
+		mFiles.clear();
         if (md5 != null && !"".equals(md5)) {
             new Thread() {
                 public void run() {
